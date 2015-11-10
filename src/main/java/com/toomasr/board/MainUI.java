@@ -91,10 +91,6 @@ public class MainUI {
     topHBox.getChildren().add(mostRightBox);
 
     String game = "src/main/resources/game.sgf";
-    game = "src/main/resources/problem-001.sgf";
-    game = "src/main/resources/eating-some-stones.sgf";
-    game = "src/main/resources/eating-some-stones.sgf";
-    game = "src/main/resources/faba-toomasr.sgf";
     initializeGame(Paths.get(game));
 
     return topHBox;
