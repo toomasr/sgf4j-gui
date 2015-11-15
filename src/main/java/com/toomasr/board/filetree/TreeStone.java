@@ -1,4 +1,4 @@
-package com.toomasr.board.tree;
+package com.toomasr.board.filetree;
 
 import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.parser.GameNode;

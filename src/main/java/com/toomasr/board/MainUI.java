@@ -8,9 +8,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.toomasr.board.tree.EmptyTriangle;
-import com.toomasr.board.tree.FileTreeView;
-import com.toomasr.board.tree.TreeStone;
+import com.toomasr.board.filetree.EmptyTriangle;
+import com.toomasr.board.filetree.FileTreeView;
+import com.toomasr.board.filetree.TreeStone;
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.board.VirtualBoard;

@@ -1,4 +1,4 @@
-package com.toomasr.board.tree;
+package com.toomasr.board.filetree;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
