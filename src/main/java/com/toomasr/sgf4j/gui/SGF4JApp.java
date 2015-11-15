@@ -1,6 +1,8 @@
-package com.toomasr.board;
+package com.toomasr.sgf4j.gui;
 
 import java.io.File;
+
+import com.toomasr.board.MainUI;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -54,6 +56,7 @@ public class SGF4JApp extends Application {
         }
       }
     });
+    
     scene.setOnDragDropped(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
