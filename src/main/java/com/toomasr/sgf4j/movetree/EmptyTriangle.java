@@ -1,4 +1,4 @@
-package com.toomasr.board.filetree;
+package com.toomasr.sgf4j.movetree;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

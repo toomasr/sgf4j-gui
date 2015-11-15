@@ -1,4 +1,4 @@
-package com.toomasr.board.filetree;
+package com.toomasr.sgf4j.filetree;
 
 import java.io.File;
 

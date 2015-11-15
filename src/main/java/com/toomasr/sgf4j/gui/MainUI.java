@@ -1,4 +1,4 @@
-package com.toomasr.board;
+package com.toomasr.sgf4j.gui;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -8,12 +8,16 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.toomasr.board.filetree.EmptyTriangle;
-import com.toomasr.board.filetree.FileTreeView;
-import com.toomasr.board.filetree.TreeStone;
 import com.toomasr.sgf4j.Sgf;
+import com.toomasr.sgf4j.board.BoardPane;
+import com.toomasr.sgf4j.board.BoardStone;
+import com.toomasr.sgf4j.board.CoordinateSquare;
+import com.toomasr.sgf4j.board.GuiBoardListener;
 import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.board.VirtualBoard;
+import com.toomasr.sgf4j.filetree.FileTreeView;
+import com.toomasr.sgf4j.movetree.EmptyTriangle;
+import com.toomasr.sgf4j.movetree.TreeStone;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;

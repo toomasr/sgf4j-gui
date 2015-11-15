@@ -1,4 +1,4 @@
-package com.toomasr.board.filetree;
+package com.toomasr.sgf4j.filetree;
 
 import java.io.File;
 import java.util.Iterator;
@@ -43,7 +43,7 @@ public class FileTreeView extends TreeView<File> {
 
   private void findMatchinNodeFromView(List<TreeItem<File>> children, File homeFolder) {
     for (Iterator<TreeItem<File>> ite = children.iterator(); ite.hasNext();) {
-      TreeItem node = ite.next();
+      TreeItem<File> node = ite.next();
       System.out.println("Node "+node);
       //findMatchinNodeFromView(node.getChildren(), homeFolder);
     }

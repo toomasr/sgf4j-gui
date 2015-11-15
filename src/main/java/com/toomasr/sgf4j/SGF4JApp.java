@@ -1,8 +1,6 @@
-package com.toomasr.sgf4j.gui;
+package com.toomasr.sgf4j;
 
-import java.io.File;
-
-import com.toomasr.board.MainUI;
+import com.toomasr.sgf4j.gui.MainUI;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -64,10 +62,10 @@ public class SGF4JApp extends Application {
         boolean success = false;
         if (db.hasFiles()) {
           success = true;
-          String filePath = null;
-          for (File file : db.getFiles()) {
-            // initializeGame(Paths.get(file.getAbsolutePath()));
-          }
+//          String filePath = null;
+//          for (File file : db.getFiles()) {
+//            // initializeGame(Paths.get(file.getAbsolutePath()));
+//          }
         }
         event.setDropCompleted(success);
         event.consume();
