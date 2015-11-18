@@ -1,6 +1,7 @@
 package com.toomasr.sgf4j.filetree;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,14 +39,48 @@ public class FileTreeView extends TreeView<File> {
 
     fakeRoot.getChildren().addAll(treeItems);
 
-    findMatchinNodeFromView(fakeRoot.getChildren(), Sgf4jGuiUtil.getHomeFolder());
+    TreeItem<File> treeItem = findMatchinTreeItemFromView(fakeRoot.getChildren(), Sgf4jGuiUtil.getHomeFolder());
+    getSelectionModel().select(treeItem);
+    scrollTo(getSelectionModel().getSelectedIndex());
   }
 
-  private void findMatchinNodeFromView(List<TreeItem<File>> children, File homeFolder) {
-    for (Iterator<TreeItem<File>> ite = children.iterator(); ite.hasNext();) {
-      TreeItem<File> node = ite.next();
-      System.out.println("Node "+node);
-      //findMatchinNodeFromView(node.getChildren(), homeFolder);
+  private TreeItem<File> findMatchinTreeItemFromView(List<TreeItem<File>> root, final File homeFolder) {
+    List<String> pathElems = tokenizePath(homeFolder);
+    TreeItem<File> rtrn = null;
+
+    for (int i = pathElems.size() - 1; i > -1; i--) {
+      String token = pathElems.get(i);
+
+      List<TreeItem<File>> children = null;
+      for (Iterator<TreeItem<File>> ite = root.iterator(); ite.hasNext();) {
+        TreeItem<File> node = ite.next();
+        if (token.equals(node.getValue().getName())) {
+          node.setExpanded(true);
+          rtrn = node;
+
+          children = node.getChildren();
+          break;
+        }
+      }
+
+      // we didn't find a match, no point in looking further
+      if (children == null) {
+        break;
+      }
+
+      // now lets go a level deeper
+      root = children;
     }
+    return rtrn;
+  }
+
+  private List<String> tokenizePath(File homeFolder) {
+    File file = new File(homeFolder.getAbsolutePath());
+    List<String> pathElems = new ArrayList<>();
+    do {
+      pathElems.add(file.getName());
+    }
+    while ((file = file.getParentFile()) != null);
+    return pathElems;
   }
 }
