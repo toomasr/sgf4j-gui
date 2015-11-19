@@ -308,8 +308,11 @@ public class MainUI {
     if (currentMove.getNextNode() != null) {
       prevMove = currentMove;
       currentMove = currentMove.getNextNode();
-
       virtualBoard.makeMove(currentMove, prevMove);
+      
+      // scroll the scrollpane to make
+      // the highlighted move visible
+      ensureVisibleForActiveTreeNode(currentMove);
     }
   }
 
@@ -334,10 +337,6 @@ public class MainUI {
     // highlight stone in the tree pane
     deHighLightStoneInTree(prevMove);
     highLightStoneInTree(move);
-
-    // scroll the scrollpane to make
-    // the highlighted move visible
-    ensureVisibleForActiveTreeNode(move);
 
     // show the associated comment
     showCommentForMove(move);
