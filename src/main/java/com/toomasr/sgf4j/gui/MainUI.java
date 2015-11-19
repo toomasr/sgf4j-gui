@@ -18,6 +18,7 @@ import com.toomasr.sgf4j.board.VirtualBoard;
 import com.toomasr.sgf4j.filetree.FileTreeView;
 import com.toomasr.sgf4j.movetree.EmptyTriangle;
 import com.toomasr.sgf4j.movetree.GlueStone;
+import com.toomasr.sgf4j.movetree.GlueStoneType;
 import com.toomasr.sgf4j.movetree.TreeStone;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
@@ -201,9 +202,26 @@ public class MainUI {
     if (node.hasChildren()) {
       Set<GameNode> children = node.getChildren();
 
+      // will determine whether the glue stone should be a single
+      // diagonal or a multiple (diagonal and vertical)
+      GlueStoneType gStoneType = children.size() > 1 ? GlueStoneType.MULTIPLE : GlueStoneType.DIAGONAL;
+
       for (Iterator<GameNode> ite = children.iterator(); ite.hasNext();) {
         GameNode childNode = ite.next();
-        movePane.add(new GlueStone(), node.getMoveNo()+1, childNode.getVisualDepth());
+
+        // the last glue shouldn't be a MULTIPLE
+        if (GlueStoneType.MULTIPLE.equals(gStoneType) && !ite.hasNext()) {
+          gStoneType = GlueStoneType.DIAGONAL;
+        }
+        
+        // also draw all the "missing" glue stones
+        for (int i = node.getVisualDepth()+2; i < childNode.getVisualDepth(); i++) {
+          movePane.add(new GlueStone(GlueStoneType.VERTICAL), node.getMoveNo() + 1, i);
+        }
+        
+        // glue stone for the node
+        movePane.add(new GlueStone(gStoneType), node.getMoveNo() + 1, childNode.getVisualDepth());
+        // and draw the actual node
         populateMoveTreePane(childNode, depth + childNode.getVisualDepth());
       }
     }
@@ -220,7 +238,6 @@ public class MainUI {
     movePane.setPadding(new Insets(0, 0, 0, 0));
     movePane.setStyle("-fx-background-color: white");
 
-    
     treePaneScrollPane = new ScrollPane(movePane);
     treePaneScrollPane.setPrefHeight(150);
     treePaneScrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -238,10 +255,10 @@ public class MainUI {
         board[i][j].removeStone();
       }
     }
-    
+
     deHighLightStoneInTree(currentMove);
     removeMarkersForNode(currentMove);
-    
+
     virtualBoard.fastForwardTo(move);
     highLightStoneOnBoard(move);
   }
@@ -309,7 +326,7 @@ public class MainUI {
       prevMove = currentMove;
       currentMove = currentMove.getNextNode();
       virtualBoard.makeMove(currentMove, prevMove);
-      
+
       // scroll the scrollpane to make
       // the highlighted move visible
       ensureVisibleForActiveTreeNode(currentMove);
@@ -319,7 +336,7 @@ public class MainUI {
   public void playMove(GameNode move, GameNode prevMove) {
     this.currentMove = move;
     this.prevMove = prevMove;
-    
+
     // we actually have a previous move!
     if (prevMove != null) {
       // de-highlight previously highlighted move
@@ -412,7 +429,7 @@ public class MainUI {
         stone.deHighLight();
       }
       else {
-        throw new RuntimeException("Unable to find node for move "+node);
+        throw new RuntimeException("Unable to find node for move " + node);
       }
     }
   }
