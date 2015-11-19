@@ -17,6 +17,7 @@ import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.board.VirtualBoard;
 import com.toomasr.sgf4j.filetree.FileTreeView;
 import com.toomasr.sgf4j.movetree.EmptyTriangle;
+import com.toomasr.sgf4j.movetree.GlueStone;
 import com.toomasr.sgf4j.movetree.TreeStone;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
@@ -202,6 +203,7 @@ public class MainUI {
 
       for (Iterator<GameNode> ite = children.iterator(); ite.hasNext();) {
         GameNode childNode = ite.next();
+        movePane.add(new GlueStone(), node.getMoveNo()+1, childNode.getVisualDepth());
         populateMoveTreePane(childNode, depth + childNode.getVisualDepth());
       }
     }
@@ -216,7 +218,9 @@ public class MainUI {
 
     movePane = new GridPane();
     movePane.setPadding(new Insets(0, 0, 0, 0));
+    movePane.setStyle("-fx-background-color: white");
 
+    
     treePaneScrollPane = new ScrollPane(movePane);
     treePaneScrollPane.setPrefHeight(150);
     treePaneScrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
