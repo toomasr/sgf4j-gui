@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.toomasr.sgf4j.gui.Sgf4jGuiUtil;
+import com.toomasr.sgf4j.properties.AppState;
 
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
@@ -39,7 +40,27 @@ public class FileTreeView extends TreeView<File> {
 
     fakeRoot.getChildren().addAll(treeItems);
 
-    TreeItem<File> treeItem = findMatchinTreeItemFromView(fakeRoot.getChildren(), Sgf4jGuiUtil.getHomeFolder());
+    openTreeAtRightLocation(fakeRoot);
+  }
+
+  /**
+   * We'll try to open the tree at the last saved location. If there is
+   * no last saved location or it doesn't exist then we'll open at the
+   * home folder reported by {@link Sgf4jGuiUtil}.
+   * 
+   * @param fakeRoot the root of the TreeView
+   */
+  private void openTreeAtRightLocation(final TreeItem<File> fakeRoot) {
+    File rightLocation = Sgf4jGuiUtil.getAppHomeFolder();
+    String fileToOpen = AppState.getInstance().getProperty(AppState.CURRENT_FILE);
+    if (fileToOpen != null) {
+      File tmpFile = new File(fileToOpen);
+      if (tmpFile.exists()) {
+        rightLocation = tmpFile;
+      }
+    }
+    
+    TreeItem<File> treeItem = findMatchinTreeItemFromView(fakeRoot.getChildren(), rightLocation);
     getSelectionModel().select(treeItem);
     scrollTo(getSelectionModel().getSelectedIndex());
   }
