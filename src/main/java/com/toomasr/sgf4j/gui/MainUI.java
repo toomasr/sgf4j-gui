@@ -146,6 +146,21 @@ public class MainUI {
       }
     }
 
+    placePreGameStones(game);
+
+    // construct the tree of the moves
+    nodeToTreeStone = new HashMap<>();
+    movePane.getChildren().clear();
+    movePane.add(new EmptyTriangle(), 1, 0);
+
+    GameNode rootNode = game.getRootNode();
+    populateMoveTreePane(rootNode, 0);
+
+    showMarkersForMove(rootNode);
+    showCommentForMove(rootNode);
+  }
+
+  private void placePreGameStones(Game game) {
     // if there are any moves that should already be on the board
     // then lets make it so
     if (game.getProperty("AB") != null) {
@@ -164,17 +179,6 @@ public class MainUI {
         virtualBoard.placeStone(StoneState.WHITE, moveCoords[0], moveCoords[1]);
       }
     }
-
-    // construct the tree of the moves
-    nodeToTreeStone = new HashMap<>();
-    movePane.getChildren().clear();
-    movePane.add(new EmptyTriangle(), 1, 0);
-
-    GameNode rootNode = game.getRootNode();
-    populateMoveTreePane(rootNode, 0);
-
-    showMarkersForMove(rootNode);
-    showCommentForMove(rootNode);
   }
 
   private void populateMoveTreePane(GameNode node, int depth) {
@@ -256,7 +260,9 @@ public class MainUI {
         board[i][j].removeStone();
       }
     }
-
+    
+    placePreGameStones(game);
+    
     deHighLightStoneInTree(currentMove);
     removeMarkersForNode(currentMove);
 
