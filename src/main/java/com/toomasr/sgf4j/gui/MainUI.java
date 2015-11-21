@@ -23,6 +23,7 @@ import com.toomasr.sgf4j.movetree.TreeStone;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
+import com.toomasr.sgf4j.properties.AppState;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -276,8 +277,11 @@ public class MainUI {
       public void handle(MouseEvent event) {
         if (event.getClickCount() == 2) {
           TreeItem<File> item = treeView.getSelectionModel().getSelectedItem();
-          if (item.getValue().toPath().toFile().isFile())
+          File file = item.getValue().toPath().toFile();
+          if (file.isFile()) {
             initializeGame(item.getValue().toPath());
+          }
+          AppState.getInstance().addProperty(AppState.CURRENT_FILE, file.getAbsolutePath());
         }
       }
 

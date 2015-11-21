@@ -1,6 +1,7 @@
 package com.toomasr.sgf4j;
 
 import com.toomasr.sgf4j.gui.MainUI;
+import com.toomasr.sgf4j.properties.AppState;
 
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -21,6 +22,8 @@ public class SGF4JApp extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
+    AppState.getInstance().loadState();
+
     primaryStage.setTitle("SGF4J");
     primaryStage.setMinWidth(1200);
     primaryStage.setMinHeight(750);
@@ -35,6 +38,12 @@ public class SGF4JApp extends Application {
 
     primaryStage.setScene(scene);
     primaryStage.show();
+  }
+  
+  @Override
+  public void stop() throws Exception {
+    super.stop();
+    AppState.getInstance().saveState();
   }
 
   public static void main(String[] args) {
