@@ -18,14 +18,22 @@ public class TreeStone extends StackPane {
   private int stonePointWidth = 28;
 
   private GameNode node;
-
   private Rectangle rect;
 
-  public TreeStone(GameNode node) {
-    super();
+  private boolean drawLeftArrow = true;
+  private boolean drawRightArrow = true;
 
+  public TreeStone(GameNode node) {
+    this(node, true, true);
+  }
+  
+  public TreeStone(GameNode node, boolean drawLeftArrow, boolean drawRightArrow) {
+    super();
     setFocusTraversable(false);
 
+    this.drawLeftArrow = drawLeftArrow;
+    this.drawRightArrow = drawRightArrow;
+    
     if ("W".equals(node.getColor()))
       this.squareState = StoneState.WHITE;
     else
@@ -37,6 +45,22 @@ public class TreeStone extends StackPane {
     if (node.getProperty("C") != null) {
       drawCommentMarker();
     }
+  }
+
+  private void drawRightArrow() {
+    Line line = new Line(28, width / 2, 30, width / 2);
+    line.setStroke(Color.BLACK);
+    line.setStrokeWidth(2d);
+    setAlignment(line, Pos.CENTER_RIGHT);
+    getChildren().add(line);
+  }
+
+  private void drawLeftArrow() {
+    Line line = new Line(0, width / 2, 2, width / 2);
+    line.setStroke(Color.BLACK);
+    line.setStrokeWidth(2d);
+    setAlignment(line, Pos.CENTER_LEFT);
+    getChildren().add(line);
   }
 
   private void drawCommentMarker() {
@@ -55,7 +79,7 @@ public class TreeStone extends StackPane {
     Color fillColor = Color.BLACK;
     Color strokeColor = Color.WHITE;
     double strokeWidth = 1.5;
-    double radius = 15 - strokeWidth;
+    double radius = 14 - strokeWidth;
 
     if (state.equals(StoneState.WHITE)) {
       fillColor = Color.WHITE;
@@ -66,7 +90,13 @@ public class TreeStone extends StackPane {
     rect.setFill(Color.WHITE);
     getChildren().add(rect);
 
-    Circle circle = new Circle(15, 15, radius);
+    if (drawRightArrow)
+      drawRightArrow();
+
+    if (drawLeftArrow)
+      drawLeftArrow();
+
+    Circle circle = new Circle(width / 2, width / 2, radius);
 
     circle.setStroke(Color.BLACK);
     circle.setStrokeWidth(strokeWidth);

@@ -185,6 +185,13 @@ public class MainUI {
     // we draw out only actual moves
     if (node.isMove()) {
       TreeStone treeStone = new TreeStone(node);
+      if (node.getPrevNode() == null || !node.getPrevNode().isMove()) {
+        treeStone = new TreeStone(node, false, true);
+      }
+      else if (node.getNextNode() == null) {
+        treeStone = new TreeStone(node, true, false);
+      }
+      
       movePane.add(treeStone, node.getMoveNo() + 1, node.getVisualDepth());
       nodeToTreeStone.put(node, treeStone);
 
