@@ -393,6 +393,11 @@ public class MainUI {
   public void undoMove(GameNode move, GameNode prevMove) {
     this.currentMove = prevMove;
     this.prevMove = move;
+    
+    if (move != null) {
+      removeMarkersForNode(move);
+    }
+    
     if (prevMove != null) {
       showMarkersForMove(prevMove);
       showCommentForMove(prevMove);
@@ -402,10 +407,6 @@ public class MainUI {
 
     deHighLightStoneInTree(move);
     highLightStoneInTree(prevMove);
-
-    if (move != null) {
-      removeMarkersForNode(move);
-    }
 
     ensureVisibleForActiveTreeNode(prevMove);
     // rather have previous move button have focus
