@@ -30,6 +30,8 @@ public class BoardStone extends StackPane {
   private Line lineH;
   private Line lineV;
 
+  private Circle starPoint;
+
   public BoardStone(int x, int y) {
     super();
     this.x = x;
@@ -97,7 +99,7 @@ public class BoardStone extends StackPane {
         || (x == 10 && y == 4) || (x == 10 && y == 16)
         || (x == 4 && y == 10) || (x == 16 && y == 10)
         || (x == 10 && y == 10)) {
-      Circle starPoint = new Circle(3, 3, 3);
+      starPoint = new Circle(3, 3, 3);
       starPoint.setStroke(Color.BLACK);
       getChildren().add(starPoint);
     }
@@ -119,6 +121,10 @@ public class BoardStone extends StackPane {
 
     lineH.setVisible(false);
     lineV.setVisible(false);
+    
+    if (starPoint != null) {
+      starPoint.setVisible(false);
+    }
   }
 
   public void removeOverlayText() {
@@ -128,6 +134,10 @@ public class BoardStone extends StackPane {
 
     lineH.setVisible(true);
     lineV.setVisible(true);
+    
+    if (starPoint != null) {
+      starPoint.setVisible(true);
+    }
   }
 
   public void placeStone(StoneState stoneState) {
