@@ -184,14 +184,21 @@ public class MainUI {
   private void populateMoveTreePane(GameNode node, int depth) {
     // we draw out only actual moves
     if (node.isMove()) {
-      TreeStone treeStone = new TreeStone(node);
-      if (node.getPrevNode() == null || !node.getPrevNode().isMove()) {
-        treeStone = new TreeStone(node, false, true);
-      }
-      else if (node.getNextNode() == null) {
-        treeStone = new TreeStone(node, true, false);
+      boolean drawLeftArrow = true;
+      boolean drawRightArrow = true;
+      
+      // no left arrow if no move preceding
+      if (node.getPrevNode() == null || (node.getPrevNode() != null && !node.getPrevNode().isMove())) {
+        drawLeftArrow = false;
       }
       
+      // no right arrow if no move following
+      if (node.getNextNode() == null || (node.getNextNode() != null && !node.getNextNode().isMove())) {
+        drawRightArrow = false;
+      }
+      
+      TreeStone treeStone = new TreeStone(node, drawLeftArrow, drawRightArrow);
+
       movePane.add(treeStone, node.getMoveNo() + 1, node.getVisualDepth());
       nodeToTreeStone.put(node, treeStone);
 
@@ -349,6 +356,15 @@ public class MainUI {
       ensureVisibleForActiveTreeNode(currentMove);
     }
   }
+  
+  public void handlePreviousPressed() {
+    if (currentMove.getParentNode() != null) {
+      prevMove = currentMove;
+      currentMove = currentMove.getParentNode();
+
+      virtualBoard.undoMove(prevMove, currentMove);
+    }
+  }
 
   public void playMove(GameNode move, GameNode prevMove) {
     this.currentMove = move;
@@ -379,15 +395,6 @@ public class MainUI {
 
     showMarkersForMove(move);
     nextButton.requestFocus();
-  }
-
-  public void handlePreviousPressed() {
-    if (currentMove.getParentNode() != null) {
-      prevMove = currentMove;
-      currentMove = currentMove.getParentNode();
-
-      virtualBoard.undoMove(prevMove, currentMove);
-    }
   }
 
   public void undoMove(GameNode move, GameNode prevMove) {

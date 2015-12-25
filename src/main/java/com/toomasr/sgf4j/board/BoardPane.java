@@ -12,6 +12,6 @@ public class BoardPane extends GridPane {
     this.width = width;
     this.height = height;
 
-    setMaxWidth(700);
+    setMinWidth(700);
   }
 }
