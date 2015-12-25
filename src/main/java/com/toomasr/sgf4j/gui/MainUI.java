@@ -355,6 +355,18 @@ public class MainUI {
       ensureVisibleForActiveTreeNode(currentMove);
     }
   }
+  
+  private void handleNextBranch() {
+    if (currentMove.hasChildren()) {
+      prevMove = currentMove;
+      currentMove = currentMove.getChildren().iterator().next();
+      virtualBoard.makeMove(currentMove, prevMove);
+
+      // scroll the scrollpane to make
+      // the highlighted move visible
+      ensureVisibleForActiveTreeNode(currentMove);
+    }
+  }
 
   public void handlePreviousPressed() {
     if (currentMove.getParentNode() != null) {
@@ -566,6 +578,9 @@ public class MainUI {
           }
           else if (event.getCode().equals(KeyCode.RIGHT)) {
             handleNextPressed();
+          }
+          else if (event.getCode().equals(KeyCode.DOWN)) {
+            handleNextBranch();
           }
         }
       }
