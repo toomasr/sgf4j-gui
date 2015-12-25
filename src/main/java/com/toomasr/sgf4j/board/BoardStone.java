@@ -111,10 +111,11 @@ public class BoardStone extends StackPane {
 
   public void addOverlayText(String str) {
     text = new Text(str);
-    Font font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, 18);
+    Font font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, 16);
     text.setFont(font);
     text.setStroke(Color.SADDLEBROWN);
     text.setFill(Color.SADDLEBROWN);
+    setAlignment(text, Pos.CENTER);
     getChildren().add(text);
 
     lineH.setVisible(false);

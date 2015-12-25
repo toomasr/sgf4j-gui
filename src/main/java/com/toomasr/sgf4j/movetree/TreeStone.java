@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class TreeStone extends StackPane {
@@ -103,7 +104,10 @@ public class TreeStone extends StackPane {
     circle.setFill(fillColor);
     getChildren().add(circle);
 
+    Font font = Font.font(Font.getDefault().getFamily(), 12);
+    
     Text text = new Text("" + node.getMoveNo());
+    text.setFont(font);
     text.setStroke(strokeColor);
     getChildren().add(text);
   }
