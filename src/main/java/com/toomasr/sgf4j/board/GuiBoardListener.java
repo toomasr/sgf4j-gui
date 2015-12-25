@@ -33,4 +33,9 @@ public class GuiBoardListener implements BoardListener {
   public void undoMove(GameNode move, GameNode prevMove) {
     mainUI.undoMove(move, prevMove);
   }
+
+  @Override
+  public void initInitialPosition() {
+    mainUI.initEmptyBoard();
+  }
 }

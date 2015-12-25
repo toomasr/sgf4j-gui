@@ -126,6 +126,21 @@ public class MainUI {
     virtualBoard = new VirtualBoard();
     virtualBoard.addBoardListener(new GuiBoardListener(this));
 
+    initEmptyBoard();
+
+    // construct the tree of the moves
+    nodeToTreeStone = new HashMap<>();
+    movePane.getChildren().clear();
+    movePane.add(new EmptyTriangle(), 0, 0);
+
+    GameNode rootNode = game.getRootNode();
+    populateMoveTreePane(rootNode, 0);
+
+    showMarkersForMove(rootNode);
+    showCommentForMove(rootNode);
+  }
+
+  public void initEmptyBoard() {
     boardPane.getChildren().clear();
 
     for (int i = 0; i < 21; i++) {
@@ -147,17 +162,6 @@ public class MainUI {
     }
 
     placePreGameStones(game);
-
-    // construct the tree of the moves
-    nodeToTreeStone = new HashMap<>();
-    movePane.getChildren().clear();
-    movePane.add(new EmptyTriangle(), 1, 0);
-
-    GameNode rootNode = game.getRootNode();
-    populateMoveTreePane(rootNode, 0);
-
-    showMarkersForMove(rootNode);
-    showCommentForMove(rootNode);
   }
 
   private void placePreGameStones(Game game) {
