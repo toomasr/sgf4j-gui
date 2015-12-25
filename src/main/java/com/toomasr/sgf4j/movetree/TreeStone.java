@@ -91,11 +91,13 @@ public class TreeStone extends StackPane {
     rect.setFill(Color.WHITE);
     getChildren().add(rect);
 
-    if (drawRightArrow)
+    if (drawRightArrow) {
       drawRightArrow();
+    }
 
-    if (drawLeftArrow)
+    if (drawLeftArrow) {
       drawLeftArrow();
+    }
 
     Circle circle = new Circle(width / 2, width / 2, radius);
 
