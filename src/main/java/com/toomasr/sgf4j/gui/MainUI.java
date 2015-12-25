@@ -224,13 +224,15 @@ public class MainUI {
         }
 
         // the visual lines can also be under a the first triangle
+        int nodeVisualDepth = node.getVisualDepth();
         int moveNo = node.getMoveNo();
         if (moveNo == -1) {
           moveNo = 0;
+          nodeVisualDepth = 0;
         }
         
         // also draw all the "missing" glue stones
-        for (int i = node.getVisualDepth() + 1; i < childNode.getVisualDepth(); i++) {
+        for (int i = nodeVisualDepth + 1; i < childNode.getVisualDepth(); i++) {
           movePane.add(new GlueStone(GlueStoneType.VERTICAL), moveNo, i);
         }
 
