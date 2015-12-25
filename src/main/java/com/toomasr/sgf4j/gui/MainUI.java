@@ -217,20 +217,27 @@ public class MainUI {
 
       for (Iterator<GameNode> ite = children.iterator(); ite.hasNext();) {
         GameNode childNode = ite.next();
-
+        
         // the last glue shouldn't be a MULTIPLE
         if (GlueStoneType.MULTIPLE.equals(gStoneType) && !ite.hasNext()) {
           gStoneType = GlueStoneType.DIAGONAL;
         }
 
+        // the visual lines can also be under a the first triangle
+        int moveNo = node.getMoveNo();
+        if (moveNo == -1) {
+          moveNo = 0;
+        }
+        
         // also draw all the "missing" glue stones
-        for (int i = node.getVisualDepth()+2; i < childNode.getVisualDepth(); i++) {
-          movePane.add(new GlueStone(GlueStoneType.VERTICAL), node.getMoveNo() + 1, i);
+        for (int i = node.getVisualDepth() + 1; i < childNode.getVisualDepth(); i++) {
+          movePane.add(new GlueStone(GlueStoneType.VERTICAL), moveNo, i);
         }
 
         // glue stone for the node
-        movePane.add(new GlueStone(gStoneType), node.getMoveNo() + 1, childNode.getVisualDepth());
-        // and draw the actual node
+        movePane.add(new GlueStone(gStoneType), moveNo, childNode.getVisualDepth());
+
+        // and recursively draw the actual node
         populateMoveTreePane(childNode, depth + childNode.getVisualDepth());
       }
     }
