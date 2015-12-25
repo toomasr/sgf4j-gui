@@ -349,6 +349,15 @@ public class MainUI {
       ensureVisibleForActiveTreeNode(currentMove);
     }
   }
+  
+  public void handlePreviousPressed() {
+    if (currentMove.getParentNode() != null) {
+      prevMove = currentMove;
+      currentMove = currentMove.getParentNode();
+
+      virtualBoard.undoMove(prevMove, currentMove);
+    }
+  }
 
   public void playMove(GameNode move, GameNode prevMove) {
     this.currentMove = move;
@@ -379,15 +388,6 @@ public class MainUI {
 
     showMarkersForMove(move);
     nextButton.requestFocus();
-  }
-
-  public void handlePreviousPressed() {
-    if (currentMove.getParentNode() != null) {
-      prevMove = currentMove;
-      currentMove = currentMove.getParentNode();
-
-      virtualBoard.undoMove(prevMove, currentMove);
-    }
   }
 
   public void undoMove(GameNode move, GameNode prevMove) {
