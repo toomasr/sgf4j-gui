@@ -186,17 +186,17 @@ public class MainUI {
     if (node.isMove()) {
       boolean drawLeftArrow = true;
       boolean drawRightArrow = true;
-      
+
       // no left arrow if no move preceding
       if (node.getPrevNode() == null || (node.getPrevNode() != null && !node.getPrevNode().isMove())) {
         drawLeftArrow = false;
       }
-      
+
       // no right arrow if no move following
       if (node.getNextNode() == null || (node.getNextNode() != null && !node.getNextNode().isMove())) {
         drawRightArrow = false;
       }
-      
+
       TreeStone treeStone = new TreeStone(node, drawLeftArrow, drawRightArrow);
 
       movePane.add(treeStone, node.getMoveNo() + 1, node.getVisualDepth());
@@ -232,12 +232,12 @@ public class MainUI {
         if (GlueStoneType.MULTIPLE.equals(gStoneType) && !ite.hasNext()) {
           gStoneType = GlueStoneType.DIAGONAL;
         }
-        
+
         // also draw all the "missing" glue stones
         for (int i = node.getVisualDepth()+2; i < childNode.getVisualDepth(); i++) {
           movePane.add(new GlueStone(GlueStoneType.VERTICAL), node.getMoveNo() + 1, i);
         }
-        
+
         // glue stone for the node
         movePane.add(new GlueStone(gStoneType), node.getMoveNo() + 1, childNode.getVisualDepth());
         // and draw the actual node
@@ -274,9 +274,9 @@ public class MainUI {
         board[i][j].removeStone();
       }
     }
-    
+
     placePreGameStones(game);
-    
+
     deHighLightStoneInTree(currentMove);
     removeMarkersForNode(currentMove);
 
@@ -356,7 +356,7 @@ public class MainUI {
       ensureVisibleForActiveTreeNode(currentMove);
     }
   }
-  
+
   public void handlePreviousPressed() {
     if (currentMove.getParentNode() != null) {
       prevMove = currentMove;
@@ -400,11 +400,11 @@ public class MainUI {
   public void undoMove(GameNode move, GameNode prevMove) {
     this.currentMove = prevMove;
     this.prevMove = move;
-    
+
     if (move != null) {
       removeMarkersForNode(move);
     }
-    
+
     if (prevMove != null) {
       showMarkersForMove(prevMove);
       showCommentForMove(prevMove);
@@ -479,6 +479,8 @@ public class MainUI {
   }
 
   private void showMarkersForMove(GameNode move) {
+    // the L property is actually not used in FF3 and FF4
+    // but I own many SGFs that still have it
     String markerProp = move.getProperty("L");
     if (markerProp != null) {
       int alphaIdx = 0;
@@ -488,9 +490,19 @@ public class MainUI {
         board[coords[0]][coords[1]].addOverlayText(Util.alphabet[alphaIdx++]);
       }
     }
+
+    // also handle the LB labels
+    Map<String, String> labels = Util.extractLabels(move.getProperty("LB"));
+    for (Iterator<Map.Entry<String, String>> ite = labels.entrySet().iterator(); ite.hasNext();) {
+      Map.Entry<String, String> entry = ite.next();
+      int[] coords = Util.alphaToCoords(entry.getKey());
+      board[coords[0]][coords[1]].addOverlayText(entry.getValue());
+    }
   }
 
   private void removeMarkersForNode(GameNode node) {
+    // the L property is actually not used in FF3 and FF4
+    // but I own many SGFs that still have it
     String markerProp = node.getProperty("L");
 
     if (markerProp != null) {
@@ -499,6 +511,14 @@ public class MainUI {
         int[] coords = Util.alphaToCoords(markers[i]);
         board[coords[0]][coords[1]].removeOverlayText();
       }
+    }
+
+    // also handle the LB labels
+    Map<String, String> labels = Util.extractLabels(node.getProperty("LB"));
+    for (Iterator<Map.Entry<String, String>> ite = labels.entrySet().iterator(); ite.hasNext();) {
+      Map.Entry<String, String> entry = ite.next();
+      int[] coords = Util.alphaToCoords(entry.getKey());
+      board[coords[0]][coords[1]].removeOverlayText();
     }
   }
 
