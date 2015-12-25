@@ -188,22 +188,9 @@ public class MainUI {
   private void populateMoveTreePane(GameNode node, int depth) {
     // we draw out only actual moves
     if (node.isMove()) {
-      boolean drawLeftArrow = true;
-      boolean drawRightArrow = true;
+      TreeStone treeStone = TreeStone.create(node);
 
-      // no left arrow if no move preceding
-      if (node.getPrevNode() == null || (node.getPrevNode() != null && !node.getPrevNode().isMove())) {
-        drawLeftArrow = false;
-      }
-
-      // no right arrow if no move following
-      if (node.getNextNode() == null || (node.getNextNode() != null && !node.getNextNode().isMove())) {
-        drawRightArrow = false;
-      }
-
-      TreeStone treeStone = new TreeStone(node, drawLeftArrow, drawRightArrow);
-
-      movePane.add(treeStone, node.getMoveNo() + 1, node.getVisualDepth());
+      movePane.add(treeStone, node.getMoveNo(), node.getVisualDepth());
       nodeToTreeStone.put(node, treeStone);
 
       treeStone.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -213,10 +200,9 @@ public class MainUI {
           fastForwardTo(stone.getMove());
         }
       });
-
     }
 
-    // and draw the next node on this line of play
+    // and recursively draw the next node on this line of play
     if (node.getNextNode() != null) {
       populateMoveTreePane(node.getNextNode(), depth + node.getVisualDepth());
     }

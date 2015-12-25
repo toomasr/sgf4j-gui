@@ -35,10 +35,12 @@ public class TreeStone extends StackPane {
     this.drawLeftArrow = drawLeftArrow;
     this.drawRightArrow = drawRightArrow;
     
-    if ("W".equals(node.getColor()))
+    if ("W".equals(node.getColor())) {
       this.squareState = StoneState.WHITE;
-    else
+    }
+    else {
       this.squareState = StoneState.BLACK;
+    }
 
     this.node = node;
 
@@ -125,7 +127,33 @@ public class TreeStone extends StackPane {
   public GameNode getMove() {
     return node;
   }
+  
+  /**
+   * Utility method to create a TreeStone with the proper
+   * arrows present. Takes into account whether there is a
+   * preceding or a following node.
+   * 
+   * @param node
+   * @return a properly initialised TreeStone.
+   */
+  public static TreeStone create(GameNode node) {
+    boolean drawLeftArrow = true;
+    boolean drawRightArrow = true;
 
+    // no left arrow if no move preceding
+    if (node.getPrevNode() == null || (node.getPrevNode() != null && !node.getPrevNode().isMove())) {
+      drawLeftArrow = false;
+    }
+
+    // no right arrow if no move following
+    if (node.getNextNode() == null || (node.getNextNode() != null && !node.getNextNode().isMove())) {
+      drawRightArrow = false;
+    }
+
+    TreeStone treeStone = new TreeStone(node, drawLeftArrow, drawRightArrow);
+    return treeStone;
+  }
+  
   @Override
   public String toString() {
     return "TreeStone [squareState=" + squareState + ", stonePointWidth=" + stonePointWidth + ", moveNo=" + node.getMoveNo() + "]";
