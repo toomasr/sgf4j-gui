@@ -98,7 +98,11 @@ public class MainUI {
     topHBox.getChildren().add(mostRightBox);
 
     String game = "src/main/resources/game.sgf";
-    initializeGame(Paths.get(game));
+    Path path = Paths.get(game);
+    // in development it is nice to have a game open on start
+    if (path.toFile().exists()) {
+      initializeGame(Paths.get(game));
+    }
 
     return topHBox;
   }
@@ -217,7 +221,7 @@ public class MainUI {
 
       for (Iterator<GameNode> ite = children.iterator(); ite.hasNext();) {
         GameNode childNode = ite.next();
-        
+
         // the last glue shouldn't be a MULTIPLE
         if (GlueStoneType.MULTIPLE.equals(gStoneType) && !ite.hasNext()) {
           gStoneType = GlueStoneType.DIAGONAL;
@@ -230,7 +234,7 @@ public class MainUI {
           moveNo = 0;
           nodeVisualDepth = 0;
         }
-        
+
         // also draw all the "missing" glue stones
         for (int i = nodeVisualDepth + 1; i < childNode.getVisualDepth(); i++) {
           movePane.add(new GlueStone(GlueStoneType.VERTICAL), moveNo, i);
@@ -355,7 +359,7 @@ public class MainUI {
       ensureVisibleForActiveTreeNode(currentMove);
     }
   }
-  
+
   private void handleNextBranch() {
     if (currentMove.hasChildren()) {
       prevMove = currentMove;

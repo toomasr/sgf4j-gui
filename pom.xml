@@ -4,7 +4,7 @@
   <groupId>com.toomasr</groupId>
   <artifactId>sgf4j-gui</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  
+
   <scm>
     <connection>scm:git:git@github.com:toomasr/sgf4j-gui.git</connection>
     <url>scm:git:git@github.com:toomasr/sgf4j-gui.git</url>
@@ -30,7 +30,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.toomasr</groupId>
@@ -49,9 +49,37 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.4</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <archive>
+            <index>true</index>
+            <manifestEntries>
+              <Main-Class>com.toomasr.sgf4j.SGF4JApp</Main-Class>
+            </manifestEntries>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
+          <finalName>sgf4j-gui</finalName>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-  
+
   <url>https://github.com/toomasr/sgf4j-gui</url>
   <description>A Simple GUI to Play Through SGF Files for Go</description>
 
@@ -70,5 +98,5 @@
       <url>http://twitter.com/toomasr</url>
     </developer>
   </developers>
-  
+
 </project>
