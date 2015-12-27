@@ -388,14 +388,14 @@ public class MainUI {
     // we actually have a previous move!
     if (prevMove != null) {
       // de-highlight previously highlighted move
-      if (prevMove.isMove()) {
+      if (prevMove.isMove() && !prevMove.isPass()) {
         deHighLightStoneOnBoard(prevMove);
       }
       // even non moves can haver markers
       removeMarkersForNode(prevMove);
     }
 
-    if (move != null) {
+    if (move != null && !move.isPass()) {
       highLightStoneOnBoard(move);
     }
 
@@ -423,7 +423,7 @@ public class MainUI {
     if (prevMove != null) {
       showMarkersForMove(prevMove);
       showCommentForMove(prevMove);
-      if (prevMove.isMove())
+      if (prevMove.isMove() && !prevMove.isPass())
         highLightStoneOnBoard(prevMove);
     }
 
