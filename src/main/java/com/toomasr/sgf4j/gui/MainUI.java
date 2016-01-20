@@ -169,21 +169,32 @@ public class MainUI {
   }
 
   private void placePreGameStones(Game game) {
-    // if there are any moves that should already be on the board
-    // then lets make it so
-    if (game.getProperty("AB") != null) {
-      String[] blackStones = game.getProperty("AB").split(",");
+    String blackStones = game.getProperty("AB", "");
+    String whiteStones = game.getProperty("AW", "");
+
+    placePreGameStones(blackStones, whiteStones);
+  }
+
+  private void placePreGameStones(GameNode node) {
+    String blackStones = node.getProperty("AB", "");
+    String whiteStones = node.getProperty("AW", "");
+
+    placePreGameStones(blackStones, whiteStones);
+  }
+
+  private void placePreGameStones(String addBlack, String addWhite) {
+    if (addBlack.length() > 0) {
+      String[] blackStones = addBlack.split(",");
       for (int i = 0; i < blackStones.length; i++) {
         int[] moveCoords = Util.alphaToCoords(blackStones[i]);
         virtualBoard.placeStone(StoneState.BLACK, moveCoords[0], moveCoords[1]);
       }
     }
 
-    // and the same story for white
-    if (game.getProperty("AW") != null) {
-      String[] blackStones = game.getProperty("AW").split(",");
-      for (int i = 0; i < blackStones.length; i++) {
-        int[] moveCoords = Util.alphaToCoords(blackStones[i]);
+    if (addWhite.length() > 0) {
+      String[] whiteStones = addWhite.split(",");
+      for (int i = 0; i < whiteStones.length; i++) {
+        int[] moveCoords = Util.alphaToCoords(whiteStones[i]);
         virtualBoard.placeStone(StoneState.WHITE, moveCoords[0], moveCoords[1]);
       }
     }
@@ -395,13 +406,17 @@ public class MainUI {
       removeMarkersForNode(prevMove);
     }
 
-    if (move != null && !move.isPass()) {
+    if (move != null && !move.isPass() && !move.isPlacementMove()) {
       highLightStoneOnBoard(move);
     }
 
     // highlight stone in the tree pane
     deHighLightStoneInTree(prevMove);
     highLightStoneInTree(move);
+
+    if (move != null && (move.getProperty("AB") != null || move.getProperty("AW") != null)) {
+      placePreGameStones(move);
+    }
 
     // show the associated comment
     showCommentForMove(move);
