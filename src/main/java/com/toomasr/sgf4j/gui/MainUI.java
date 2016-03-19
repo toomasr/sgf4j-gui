@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.toomasr.sgf4j.Sgf;
+import com.toomasr.sgf4j.SgfProperties;
 import com.toomasr.sgf4j.board.BoardPane;
 import com.toomasr.sgf4j.board.BoardStone;
 import com.toomasr.sgf4j.board.CoordinateSquare;
@@ -30,6 +31,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TextArea;
@@ -62,6 +64,8 @@ public class MainUI {
   private Button previousButton;
 
   private ScrollPane treePaneScrollPane;
+  private Label whitePlayerName;
+  private Label blackPlayerName;
 
   public MainUI() {
     board = new BoardStone[19][19];
@@ -71,13 +75,21 @@ public class MainUI {
   }
 
   public Pane buildUI() throws Exception {
-    HBox topHBox = new HBox();
-    enableKeyboardShortcuts(topHBox);
+    HBox rootHBox = new HBox();
+    enableKeyboardShortcuts(rootHBox);
+
+    GridPane leftPane = new GridPane();
+
+    VBox gameMetaInfo = generateGameMetaInfo();
+    GridPane.setConstraints(gameMetaInfo, 0, 0);
 
     VBox fileTreePane = generateFileTreePane();
-    fileTreePane.setAlignment(Pos.CENTER);
+    GridPane.setConstraints(fileTreePane, 0, 1);
 
-    topHBox.getChildren().add(fileTreePane);
+    leftPane.getChildren().addAll(gameMetaInfo, fileTreePane);
+    leftPane.setAlignment(Pos.CENTER_LEFT);
+
+    rootHBox.getChildren().addAll(leftPane);
 
     GridPane boardPane = generateBoardPane();
     TilePane buttonPane = generateButtonPane();
@@ -91,11 +103,11 @@ public class MainUI {
     centerVbox.getChildren().add(buttonPane);
     centerVbox.getChildren().add(treePane);
 
-    topHBox.getChildren().add(centerVbox);
+    rootHBox.getChildren().add(centerVbox);
 
     VBox mostRightBox = new VBox();
     mostRightBox = generateCommentPane();
-    topHBox.getChildren().add(mostRightBox);
+    rootHBox.getChildren().add(mostRightBox);
 
     String game = "src/main/resources/game.sgf";
     Path path = Paths.get(game);
@@ -104,7 +116,31 @@ public class MainUI {
       initializeGame(Paths.get(game));
     }
 
-    return topHBox;
+    return rootHBox;
+  }
+
+  private VBox generateGameMetaInfo() {
+    VBox vbox = new VBox();
+
+    vbox.setMinWidth(250);
+    GridPane pane = new GridPane();
+
+    Label blackPlayerLabel = new Label("Black:");
+    GridPane.setConstraints(blackPlayerLabel, 1, 0);
+
+    blackPlayerName = new Label("Unknown");
+    GridPane.setConstraints(blackPlayerName, 2, 0);
+
+    Label whitePlayerLabel = new Label("White:");
+    GridPane.setConstraints(whitePlayerLabel, 1, 1);
+
+    whitePlayerName = new Label("Unknown");
+    GridPane.setConstraints(whitePlayerName, 2, 1);
+
+    pane.getChildren().addAll(blackPlayerLabel, blackPlayerName, whitePlayerLabel, whitePlayerName);
+
+    vbox.getChildren().add(pane);
+    return vbox;
   }
 
   private VBox generateCommentPane() {
@@ -142,6 +178,13 @@ public class MainUI {
 
     showMarkersForMove(rootNode);
     showCommentForMove(rootNode);
+
+    showMetaInfoForGame(this.game);
+  }
+
+  private void showMetaInfoForGame(Game game) {
+    whitePlayerName.setText(game.getProperty(SgfProperties.WHITE_PLAYER_NAME));
+    blackPlayerName.setText(game.getProperty(SgfProperties.BLACK_PLAYER_NAME));
   }
 
   public void initEmptyBoard() {
