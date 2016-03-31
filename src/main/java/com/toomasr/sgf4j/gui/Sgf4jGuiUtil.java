@@ -13,7 +13,12 @@ public class Sgf4jGuiUtil {
   public static File getHomeFolder() {
     return new File(System.getProperty("user.home"));
   }
-  
+
+  public static String getLogFilename() {
+    File logFilename = new File(getAppHomeFolder(), "sgf4j-log.txt");
+    return logFilename.toString();
+  }
+
   public static File getAppHomeFolder() {
     File appHomeFolder = new File( getHomeFolder(), ".sgf4j-gui");
     if (!appHomeFolder.exists()) {
