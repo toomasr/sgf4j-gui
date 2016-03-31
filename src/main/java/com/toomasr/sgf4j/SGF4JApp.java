@@ -39,6 +39,7 @@ public class SGF4JApp extends Application {
 
     MainUI visualBoard = new MainUI();
     Pane topHBox = visualBoard.buildUI();
+    visualBoard.initGame();
 
     Scene scene = new Scene(topHBox, 630, 750);
     scene.getStylesheets().add("/styles.css");

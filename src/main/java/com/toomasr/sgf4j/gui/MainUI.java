@@ -10,7 +10,6 @@ import java.util.Set;
 
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.SgfProperties;
-import com.toomasr.sgf4j.board.BoardPane;
 import com.toomasr.sgf4j.board.BoardStone;
 import com.toomasr.sgf4j.board.CoordinateSquare;
 import com.toomasr.sgf4j.board.GuiBoardListener;
@@ -78,45 +77,54 @@ public class MainUI {
     HBox rootHBox = new HBox();
     enableKeyboardShortcuts(rootHBox);
 
-    GridPane leftPane = new GridPane();
+    /*
+     * --------------------------
+     * |      |         |       |
+     * | left | center  | right |
+     * |      |         |       |
+     * --------------------------
+     */
+    Insets paneInsets = new Insets(5,0,0,0);
 
-    VBox gameMetaInfo = generateGameMetaInfo();
-    GridPane.setConstraints(gameMetaInfo, 0, 0);
+    VBox leftVBox = new VBox(5);
+    leftVBox.setPadding(paneInsets);
 
+    VBox centerVBox = new VBox(5);
+    centerVBox.setPadding(paneInsets);
+
+    VBox rightVBox = new VBox(5);
+    rightVBox.setPadding(paneInsets);
+
+    // constructing the left box
     VBox fileTreePane = generateFileTreePane();
-    GridPane.setConstraints(fileTreePane, 0, 1);
+    leftVBox.getChildren().addAll(fileTreePane);
 
-    leftPane.getChildren().addAll(gameMetaInfo, fileTreePane);
-    leftPane.setAlignment(Pos.CENTER_LEFT);
-
-    rootHBox.getChildren().addAll(leftPane);
-
+    // constructing the center box
+    centerVBox.setMaxWidth(640);
+    centerVBox.setMinWidth(640);
     GridPane boardPane = generateBoardPane();
     TilePane buttonPane = generateButtonPane();
-    VBox treePane = generateMoveTreePane();
+    ScrollPane treePane = generateMoveTreePane();
 
-    VBox centerVbox = new VBox();
-    centerVbox.setMaxWidth(600);
-    centerVbox.setAlignment(Pos.CENTER);
+    centerVBox.getChildren().addAll(boardPane, buttonPane, treePane);
 
-    centerVbox.getChildren().add(boardPane);
-    centerVbox.getChildren().add(buttonPane);
-    centerVbox.getChildren().add(treePane);
+    // constructing the right box
+    VBox gameMetaInfo = generateGameMetaInfo();
+    TextArea commentArea = generateCommentPane();
+    rightVBox.getChildren().addAll(gameMetaInfo, commentArea);
 
-    rootHBox.getChildren().add(centerVbox);
+    rootHBox.getChildren().addAll(leftVBox, centerVBox, rightVBox);
 
-    VBox mostRightBox = new VBox();
-    mostRightBox = generateCommentPane();
-    rootHBox.getChildren().add(mostRightBox);
+    return rootHBox;
+  }
 
+  public void initGame() {
     String game = "src/main/resources/game.sgf";
     Path path = Paths.get(game);
     // in development it is nice to have a game open on start
     if (path.toFile().exists()) {
       initializeGame(Paths.get(game));
     }
-
-    return rootHBox;
   }
 
   private VBox generateGameMetaInfo() {
@@ -143,17 +151,13 @@ public class MainUI {
     return vbox;
   }
 
-  private VBox generateCommentPane() {
-    VBox rtrn = new VBox();
-
+  private TextArea generateCommentPane() {
     commentArea = new TextArea();
     commentArea.setFocusTraversable(false);
     commentArea.setWrapText(true);
     commentArea.setPrefSize(300, 600);
 
-    rtrn.getChildren().add(commentArea);
-
-    return rtrn;
+    return commentArea;
   }
 
   private void initializeGame(Path pathToSgf) {
@@ -307,8 +311,7 @@ public class MainUI {
    * Generates the boilerplate for the move tree pane. The
    * pane is actually populated during game initialization.
    */
-  private VBox generateMoveTreePane() {
-    VBox rtrn = new VBox();
+  private ScrollPane generateMoveTreePane() {
 
     movePane = new GridPane();
     movePane.setPadding(new Insets(0, 0, 0, 0));
@@ -319,9 +322,7 @@ public class MainUI {
     treePaneScrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
     treePaneScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
-    rtrn.getChildren().add(treePaneScrollPane);
-
-    return rtrn;
+    return treePaneScrollPane;
   }
 
   private void fastForwardTo(GameNode move) {
@@ -346,7 +347,9 @@ public class MainUI {
     vbox.setPrefWidth(200);
     TreeView<File> treeView = new FileTreeView();
     treeView.setFocusTraversable(false);
-    vbox.getChildren().add(treeView);
+
+    Label label = new Label("Choose SGF File");
+    vbox.getChildren().addAll(label, treeView);
 
     treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
@@ -370,7 +373,6 @@ public class MainUI {
   private TilePane generateButtonPane() {
     TilePane pane = new TilePane();
     pane.setAlignment(Pos.CENTER);
-    pane.setMaxWidth(700);
     pane.getStyleClass().add("bordered");
 
     TextField moveNoField = new TextField("0");
@@ -608,7 +610,7 @@ public class MainUI {
   }
 
   private GridPane generateBoardPane() {
-    boardPane = new BoardPane(19, 19);
+    boardPane = new GridPane();
 
     for (int i = 0; i < 21; i++) {
       if (i > 1 && i < 20) {
