@@ -1,19 +1,18 @@
 package com.toomasr.sgf4j.board;
 
-import com.toomasr.sgf4j.board.StoneState;
-
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class BoardStone extends StackPane {
-  public static final int width = 30;
+  public static final int width = 29;
 
   private final int x;
   private final int y;
@@ -22,9 +21,9 @@ public class BoardStone extends StackPane {
 
   private double strokeWidth = 1.5;
 
-  private Circle highLightCircle = new Circle(15, 15, 9);
+  private Circle highLightCircle = new Circle(15, 15, 10);
   // main visual stone - a circle shape
-  private Circle stoneCircle = new Circle(15, 15, 13);
+  private Circle stoneCircle = new Circle(15, 15, 12.5);
 
   private Text text;
   private Line lineH;
@@ -34,11 +33,17 @@ public class BoardStone extends StackPane {
 
   public BoardStone(int x, int y) {
     super();
+
     this.x = x;
     this.y = y;
 
     setSize(width);
     setAlignment(Pos.CENTER);
+
+    // some defaults
+    highLightCircle.setStrokeType(StrokeType.INSIDE);
+    highLightCircle.setStrokeWidth(strokeWidth);
+
     init();
   }
 
@@ -68,7 +73,7 @@ public class BoardStone extends StackPane {
       setAlignment(lineH, Pos.CENTER_RIGHT);
     }
     else if (x == 19) {
-      lineH = new Line(width / 2, width / 2, width, width / 2);
+      lineH = new Line(width / 2, width / 2, width - 1, width / 2);
       getChildren().add(lineH);
       setAlignment(lineH, Pos.CENTER_LEFT);
     }
@@ -85,7 +90,7 @@ public class BoardStone extends StackPane {
       setAlignment(lineV, Pos.BOTTOM_CENTER);
     }
     else if (y == 19) {
-      lineV = new Line(width / 2, width / 2, width / 2, width);
+      lineV = new Line(width / 2, width / 2, width / 2, width - 1);
       getChildren().add(lineV);
       setAlignment(lineV, Pos.TOP_CENTER);
     }
@@ -122,7 +127,7 @@ public class BoardStone extends StackPane {
 
     lineH.setVisible(false);
     lineV.setVisible(false);
-    
+
     if (starPoint != null) {
       starPoint.setVisible(false);
     }
@@ -135,7 +140,7 @@ public class BoardStone extends StackPane {
 
     lineH.setVisible(true);
     lineV.setVisible(true);
-    
+
     if (starPoint != null) {
       starPoint.setVisible(true);
     }
@@ -145,6 +150,7 @@ public class BoardStone extends StackPane {
     this.squareState = stoneState;
 
     stoneCircle.setStroke(Color.BLACK);
+    stoneCircle.setStrokeType(StrokeType.OUTSIDE);
     stoneCircle.setStrokeWidth(strokeWidth);
     stoneCircle.setVisible(true);
 
@@ -165,12 +171,10 @@ public class BoardStone extends StackPane {
   public void highLightStone() {
     if (squareState.equals(StoneState.WHITE)) {
       highLightCircle.setStroke(Color.BLACK);
-      highLightCircle.setStrokeWidth(strokeWidth);
       highLightCircle.setFill(Color.WHITE);
     }
     else {
       highLightCircle.setStroke(Color.WHITE);
-      highLightCircle.setStrokeWidth(strokeWidth);
       highLightCircle.setFill(Color.BLACK);
     }
 
