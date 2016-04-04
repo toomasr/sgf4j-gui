@@ -54,7 +54,7 @@ public class MainUI {
   private VirtualBoard virtualBoard;
   private BoardStone[][] board;
   private GridPane movePane;
-  private GridPane boardPane;
+  private GridPane boardPane = new GridPane();
 
   private Map<GameNode, TreeStone> nodeToTreeStone = new HashMap<>();
 
@@ -102,7 +102,8 @@ public class MainUI {
     // constructing the center box
     centerVBox.setMaxWidth(640);
     centerVBox.setMinWidth(640);
-    GridPane boardPane = generateBoardPane();
+
+    boardPane = generateBoardPane(boardPane);
     TilePane buttonPane = generateButtonPane();
     ScrollPane treePane = generateMoveTreePane();
 
@@ -192,26 +193,7 @@ public class MainUI {
   }
 
   public void initEmptyBoard() {
-    boardPane.getChildren().clear();
-
-    for (int i = 0; i < 21; i++) {
-      if (i > 1 && i < 20) {
-        board[i - 1] = new BoardStone[19];
-      }
-
-      for (int j = 0; j < 21; j++) {
-        if (i == 0 || j == 0 || i == 20 || j == 20) {
-          CoordinateSquare btn = new CoordinateSquare(i, j);
-          boardPane.add(btn, i, j);
-        }
-        else {
-          BoardStone btn = new BoardStone(i, j);
-          boardPane.add(btn, i, j);
-          board[i - 1][j - 1] = btn;
-        }
-      }
-    }
-
+    generateBoardPane(boardPane);
     placePreGameStones(game);
   }
 
@@ -609,8 +591,8 @@ public class MainUI {
     board[moveCoords[0]][moveCoords[1]].deHighLightStone();
   }
 
-  private GridPane generateBoardPane() {
-    boardPane = new GridPane();
+  private GridPane generateBoardPane(GridPane boardPane) {
+    boardPane.getChildren().clear();
 
     for (int i = 0; i < 21; i++) {
       if (i > 1 && i < 20) {
