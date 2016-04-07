@@ -18,7 +18,6 @@ public class FileTreeView extends TreeView<File> {
   public FileTreeView() {
     super();
 
-    setMinWidth(250);
     getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
     setCellFactory(new Callback<TreeView<File>, TreeCell<File>>() {
@@ -47,7 +46,7 @@ public class FileTreeView extends TreeView<File> {
    * We'll try to open the tree at the last saved location. If there is
    * no last saved location or it doesn't exist then we'll open at the
    * home folder reported by {@link Sgf4jGuiUtil}.
-   * 
+   *
    * @param fakeRoot the root of the TreeView
    */
   private void openTreeAtRightLocation(final TreeItem<File> fakeRoot) {
@@ -59,7 +58,7 @@ public class FileTreeView extends TreeView<File> {
         rightLocation = tmpFile;
       }
     }
-    
+
     TreeItem<File> treeItem = findMatchinTreeItemFromView(fakeRoot.getChildren(), rightLocation);
     getSelectionModel().select(treeItem);
     scrollTo(getSelectionModel().getSelectedIndex());

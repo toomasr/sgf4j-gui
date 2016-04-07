@@ -326,7 +326,8 @@ public class MainUI {
 
   private VBox generateFileTreePane() {
     VBox vbox = new VBox();
-    vbox.setPrefWidth(200);
+    vbox.setMinWidth(250);
+
     TreeView<File> treeView = new FileTreeView();
     treeView.setFocusTraversable(false);
 
