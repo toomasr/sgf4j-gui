@@ -65,6 +65,7 @@ public class MainUI {
   private ScrollPane treePaneScrollPane;
   private Label whitePlayerName;
   private Label blackPlayerName;
+  private Label label;
 
   public MainUI() {
     board = new BoardStone[19][19];
@@ -74,17 +75,14 @@ public class MainUI {
   }
 
   public Pane buildUI() throws Exception {
-    HBox rootHBox = new HBox();
-    enableKeyboardShortcuts(rootHBox);
-
     /*
      * --------------------------
-     * |      |         |       |
-     * | left | center  | right |
-     * |      |         |       |
+     * | | | |
+     * | left | center | right |
+     * | | | |
      * --------------------------
      */
-    Insets paneInsets = new Insets(5,0,0,0);
+    Insets paneInsets = new Insets(5, 0, 0, 0);
 
     VBox leftVBox = new VBox(5);
     leftVBox.setPadding(paneInsets);
@@ -114,9 +112,28 @@ public class MainUI {
     TextArea commentArea = generateCommentPane();
     rightVBox.getChildren().addAll(gameMetaInfo, commentArea);
 
+    HBox rootHBox = new HBox();
+    enableKeyboardShortcuts(rootHBox);
     rootHBox.getChildren().addAll(leftVBox, centerVBox, rightVBox);
 
-    return rootHBox;
+    VBox rootVbox = new VBox();
+    HBox statusBar = generateStatusBar();
+    rootVbox.getChildren().addAll(rootHBox, statusBar);
+
+    return rootVbox;
+  }
+
+  private HBox generateStatusBar() {
+    HBox rtrn = new HBox();
+
+    label = new Label("MainUI loaded");
+    rtrn.getChildren().add(label);
+
+    return rtrn;
+  }
+
+  public void updateStatus(String update) {
+    this.label.setText(update);
   }
 
   public void initGame() {
@@ -482,7 +499,7 @@ public class MainUI {
     if (move != null && move.isMove()) {
       TreeStone stone = nodeToTreeStone.get(move);
 
-      // the movetree is not yet fully operational and some
+      // the move tree is not yet fully operational and some
       // points don't exist in the map yet
       if (stone == null)
         return;
