@@ -509,6 +509,17 @@ public class MainUI {
       double scrollTo = ((x) - 11 * 30) / (width - 21 * 30);
 
       treePaneScrollPane.setHvalue(scrollTo);
+
+      // adjust the vertical scroll
+      double height = treePaneScrollPane.getContent().getBoundsInLocal().getHeight();
+      double y = stone.getBoundsInParent().getMaxY();
+      double scrollToY = y / height;
+
+      if (move.getVisualDepth() == 0) {
+        scrollToY = 0d;
+      }
+
+      treePaneScrollPane.setVvalue(scrollToY);
     }
   }
 
