@@ -202,6 +202,9 @@ public class MainUI {
     showCommentForMove(rootNode);
 
     showMetaInfoForGame(this.game);
+
+    treePaneScrollPane.setHvalue(0);
+    treePaneScrollPane.setVvalue(0);
   }
 
   private void showMetaInfoForGame(Game game) {
