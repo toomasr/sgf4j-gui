@@ -553,7 +553,12 @@ public class MainUI {
   private void showCommentForMove(GameNode move) {
     String comment = move.getProperty("C");
     if (comment == null) {
-      comment = "";
+      if (move.getPrevNode() == null && game.getProperty("C") != null) {
+        comment = game.getProperty("C");
+      }
+      else {
+        comment = "";
+      }
     }
     // some helpers I used for parsing needs to be undone - see the Parser.java
     // in sgf4j project
