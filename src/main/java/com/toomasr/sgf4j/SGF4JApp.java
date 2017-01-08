@@ -1,17 +1,9 @@
 package com.toomasr.sgf4j;
 
-import java.io.IOException;
-
-import org.apache.log4j.Appender;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.FileAppender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.toomasr.sgf4j.gui.MainUI;
-import com.toomasr.sgf4j.gui.Sgf4jGuiUtil;
 import com.toomasr.sgf4j.properties.AppState;
 
 import javafx.application.Application;
@@ -24,7 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 public class SGF4JApp extends Application {
-  private static final Logger logger = Logger.getLogger(SGF4JApp.class);
+  private static final Logger logger = LoggerFactory.getLogger(SGF4JApp.class);
 
   public SGF4JApp() {
   }
@@ -72,22 +64,16 @@ public class SGF4JApp extends Application {
   }
 
   private static void initializeLogging() {
-    BasicConfigurator.configure();
-
-    Layout layout = new SimpleLayout();
-    Appender appender;
-    try {
-      appender = new FileAppender(layout, Sgf4jGuiUtil.getLogFilename());
-      logger.addAppender(appender);
-    }
-    catch (IOException e) {
-      System.out.println("WARNING: Unable to init logging properly.");
-      e.printStackTrace();
-
-      // falling back to a console appender
-      appender = new ConsoleAppender(layout);
-      logger.addAppender(appender);
-    }
+//    Layout layout = new SimpleLayout();
+//    Appender appender;
+//    try {
+//      appender = new FileAppender(layout, Sgf4jGuiUtil.getLogFilename());
+//      logger.addAppender(appender);
+//    }
+//    catch (IOException e) {
+//      System.out.println("WARNING: Unable to init logging properly.");
+//      e.printStackTrace();
+//    }
   }
 
   private void enableFileDragging(Scene scene) {
