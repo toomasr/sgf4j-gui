@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.SgfProperties;
 import com.toomasr.sgf4j.board.BoardStone;
@@ -24,6 +27,7 @@ import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
 import com.toomasr.sgf4j.properties.AppState;
+import com.toomasr.sgf4j.util.Encoding;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -45,8 +49,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 public class MainUI {
+  private static final Logger logger = LoggerFactory.getLogger(MainUI.class);
+
   private Button nextButton;
   private GameNode currentMove = null;
   private GameNode prevMove = null;
@@ -179,7 +186,11 @@ public class MainUI {
   }
 
   private void initializeGame(Path pathToSgf) {
-    this.game = Sgf.createFromPath(pathToSgf);
+    Font font = Font.getDefault();
+    java.awt.Font awtFont = new java.awt.Font(font.getName(), java.awt.Font.PLAIN, (int) font.getSize());
+    String encoding = Encoding.determineEncoding(pathToSgf, awtFont);
+    logger.debug("Determined encoding {}", encoding);
+    this.game = Sgf.createFromPath(pathToSgf, encoding);
 
     currentMove = this.game.getRootNode();
     prevMove = null;
