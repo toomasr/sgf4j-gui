@@ -190,6 +190,7 @@ public class MainUI {
     java.awt.Font awtFont = new java.awt.Font(font.getName(), java.awt.Font.PLAIN, (int) font.getSize());
     String encoding = Encoding.determineEncoding(pathToSgf, awtFont);
     logger.debug("Determined encoding {}", encoding);
+    updateStatus(String.format("Loaded %s with encoding %s", pathToSgf.getFileName(), encoding));
     this.game = Sgf.createFromPath(pathToSgf, encoding);
 
     currentMove = this.game.getRootNode();
