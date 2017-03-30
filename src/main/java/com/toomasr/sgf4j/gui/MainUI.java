@@ -328,9 +328,13 @@ public class MainUI {
 
         // the visual lines can also be under a the first triangle
         int nodeVisualDepth = node.getVisualDepth();
-        int moveNo = node.getMoveNo();
+        int moveNo = node.getNodeNo();
+
         if (moveNo == -1) {
           moveNo = 0;
+          nodeVisualDepth = 0;
+        }
+        else if (nodeVisualDepth == -1) {
           nodeVisualDepth = 0;
         }
 
