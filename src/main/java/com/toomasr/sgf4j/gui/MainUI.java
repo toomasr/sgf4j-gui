@@ -233,17 +233,17 @@ public class MainUI {
     String blackStones = game.getProperty("AB", "");
     String whiteStones = game.getProperty("AW", "");
 
-    placePreGameStones(blackStones, whiteStones);
+    placePlacementGameStones(blackStones, whiteStones);
   }
 
-  private void placePreGameStones(GameNode node) {
+  private void placePlacementStones(GameNode node) {
     String blackStones = node.getProperty("AB", "");
     String whiteStones = node.getProperty("AW", "");
 
-    placePreGameStones(blackStones, whiteStones);
+    placePlacementGameStones(blackStones, whiteStones);
   }
 
-  private void placePreGameStones(String addBlack, String addWhite) {
+  private void placePlacementGameStones(String addBlack, String addWhite) {
     if (addBlack.length() > 0) {
       String[] blackStones = addBlack.split(",");
       for (int i = 0; i < blackStones.length; i++) {
@@ -261,12 +261,39 @@ public class MainUI {
     }
   }
 
+  private void removePreGameStones(GameNode node) {
+    String blackStones = node.getProperty("AB", "");
+    String whiteStones = node.getProperty("AW", "");
+
+    removePlacementStones(blackStones, whiteStones);
+  }
+
+
+  private void removePlacementStones(String removeBlack, String removeWhite) {
+    if (removeBlack.length() > 0) {
+      String[] blackStones = removeBlack.split(",");
+      for (int i = 0; i < blackStones.length; i++) {
+        int[] moveCoords = Util.alphaToCoords(blackStones[i]);
+        virtualBoard.removeStone(moveCoords[0], moveCoords[1]);
+      }
+    }
+
+    if (removeWhite.length() > 0) {
+      String[] whiteStones = removeWhite.split(",");
+      for (int i = 0; i < whiteStones.length; i++) {
+        int[] moveCoords = Util.alphaToCoords(whiteStones[i]);
+        virtualBoard.removeStone(moveCoords[0], moveCoords[1]);
+      }
+    }
+
+  }
+
   private void populateMoveTreePane(GameNode node, int depth) {
     // we draw out only actual moves
     if (node.isMove()) {
       TreeStone treeStone = TreeStone.create(node);
 
-      movePane.add(treeStone, node.getMoveNo(), node.getVisualDepth());
+      movePane.add(treeStone, node.getNodeNo(), node.getVisualDepth());
       nodeToTreeStone.put(node, treeStone);
 
       treeStone.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -477,7 +504,7 @@ public class MainUI {
     highLightStoneInTree(move);
 
     if (move != null && (move.getProperty("AB") != null || move.getProperty("AW") != null)) {
-      placePreGameStones(move);
+      placePlacementStones(move);
     }
 
     // show the associated comment
@@ -503,6 +530,8 @@ public class MainUI {
       if (prevMove.isMove() && !prevMove.isPass())
         highLightStoneOnBoard(prevMove);
     }
+
+    removePreGameStones(move);
 
     deHighLightStoneInTree(move);
     highLightStoneInTree(prevMove);
