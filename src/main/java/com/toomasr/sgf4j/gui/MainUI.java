@@ -49,6 +49,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 
 public class MainUI {
@@ -103,9 +104,10 @@ public class MainUI {
     // constructing the left box
     VBox fileTreePane = generateFileTreePane();
     leftVBox.getChildren().addAll(fileTreePane);
+    VBox.setVgrow(fileTreePane, Priority.ALWAYS);
 
     // constructing the center box
-    centerVBox.setMaxWidth(640);
+    //centerVBox.setMaxWidth(640);
     centerVBox.setMinWidth(640);
 
     boardPane = generateBoardPane(boardPane);
@@ -113,19 +115,25 @@ public class MainUI {
     ScrollPane treePane = generateMoveTreePane();
 
     centerVBox.getChildren().addAll(boardPane, buttonPane, treePane);
+    VBox.setVgrow(treePane, Priority.ALWAYS);
+    VBox.setVgrow(buttonPane, Priority.NEVER);
 
     // constructing the right box
     VBox gameMetaInfo = generateGameMetaInfo();
     TextArea commentArea = generateCommentPane();
     rightVBox.getChildren().addAll(gameMetaInfo, commentArea);
+    VBox.setVgrow(commentArea, Priority.ALWAYS);
 
     HBox rootHBox = new HBox();
     enableKeyboardShortcuts(rootHBox);
     rootHBox.getChildren().addAll(leftVBox, centerVBox, rightVBox);
+    HBox.setHgrow(centerVBox, Priority.ALWAYS);
 
     VBox rootVbox = new VBox();
     HBox statusBar = generateStatusBar();
     rootVbox.getChildren().addAll(rootHBox, statusBar);
+    VBox.setVgrow(rootHBox, Priority.ALWAYS);
+    VBox.setVgrow(statusBar, Priority.NEVER);
 
     return rootVbox;
   }
@@ -398,6 +406,7 @@ public class MainUI {
 
     Label label = new Label("Choose SGF File");
     vbox.getChildren().addAll(label, treeView);
+    VBox.setVgrow(treeView, Priority.ALWAYS);
 
     treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
