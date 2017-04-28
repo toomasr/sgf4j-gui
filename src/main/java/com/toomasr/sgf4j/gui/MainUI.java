@@ -228,8 +228,19 @@ public class MainUI {
   }
 
   private void showMetaInfoForGame(Game game) {
-    whitePlayerName.setText(game.getProperty(SgfProperties.WHITE_PLAYER_NAME));
-    blackPlayerName.setText(game.getProperty(SgfProperties.BLACK_PLAYER_NAME));
+    String whiteRating = game.getProperty(SgfProperties.WHITE_PLAYER_RATING);
+    String whiteLabel = game.getProperty(SgfProperties.WHITE_PLAYER_NAME);
+    if (whiteRating != null) {
+      whiteLabel = whiteLabel + " ["+whiteRating+"]";
+    }
+    whitePlayerName.setText(whiteLabel);
+
+    String blackRating = game.getProperty(SgfProperties.BLACK_PLAYER_RATING);
+    String blackLabel = game.getProperty(SgfProperties.BLACK_PLAYER_NAME);
+    if (blackRating != null) {
+      blackLabel = blackLabel + " ["+blackRating+"]";
+    }
+    blackPlayerName.setText(blackLabel);
   }
 
   public void initEmptyBoard() {
