@@ -1,5 +1,6 @@
 package com.toomasr.sgf4j;
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,27 +54,27 @@ public class SGF4JApp extends Application {
 
     StringBuffer buff = new StringBuffer();
     for (int i = 0; i < args.length; i++) {
-      buff.append("'"+args[i]+"'");
+      buff.append("'" + args[i] + "'");
     }
 
     if (args.length > 0) {
-      logger.debug("Params to the program are"+buff);
+      logger.debug("Params to the program are" + buff);
     }
 
     launch(args);
   }
 
   private static void initializeLogging() {
-//    Layout layout = new SimpleLayout();
-//    Appender appender;
-//    try {
-//      appender = new FileAppender(layout, Sgf4jGuiUtil.getLogFilename());
-//      logger.addAppender(appender);
-//    }
-//    catch (IOException e) {
-//      System.out.println("WARNING: Unable to init logging properly.");
-//      e.printStackTrace();
-//    }
+    // Layout layout = new SimpleLayout();
+    // Appender appender;
+    // try {
+    // appender = new FileAppender(layout, Sgf4jGuiUtil.getLogFilename());
+    // logger.addAppender(appender);
+    // }
+    // catch (IOException e) {
+    // System.out.println("WARNING: Unable to init logging properly.");
+    // e.printStackTrace();
+    // }
   }
 
   private void enableFileDragging(Scene scene) {
@@ -97,10 +98,10 @@ public class SGF4JApp extends Application {
         boolean success = false;
         if (db.hasFiles()) {
           success = true;
-//          String filePath = null;
-//          for (File file : db.getFiles()) {
-//            // initializeGame(Paths.get(file.getAbsolutePath()));
-//          }
+          // String filePath = null;
+          // for (File file : db.getFiles()) {
+          // // initializeGame(Paths.get(file.getAbsolutePath()));
+          // }
         }
         event.setDropCompleted(success);
         event.consume();

@@ -719,7 +719,7 @@ public class MainUI {
   }
 
   private void enableKeyboardShortcuts(HBox topHBox) {
-    topHBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
+    topHBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
         if (event.getEventType().equals(KeyEvent.KEY_PRESSED)) {
