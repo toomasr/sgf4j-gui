@@ -6,9 +6,19 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
 public class CoordinateSquare extends Canvas {
+
+  private int x;
+  private int y;
+
   public CoordinateSquare(int x, int y) {
     super(BoardStone.width, BoardStone.width);
+    this.x = x;
+    this.y = y;
 
+    init();
+  }
+
+  private void init() {
     // corner square will stay empty
     if ((x == 0 && y == 0) || (x == 20 && y == 20) || (x == 0 && y == 20) || (x == 20 && y == 0)) {
       return;
@@ -28,5 +38,15 @@ public class CoordinateSquare extends Canvas {
     else if (y == 20) {
       gc.fillText(Util.alphabet[x - 1], BoardStone.width / 3, BoardStone.width / 3 + 0.2 * BoardStone.width);
     }
+  }
+
+  public void resizeTo(int newSize) {
+    setWidth(newSize);
+    setHeight(newSize);
+
+    GraphicsContext gc = this.getGraphicsContext2D();
+    gc.clearRect(0, 0, newSize, newSize);
+
+    init();
   }
 }

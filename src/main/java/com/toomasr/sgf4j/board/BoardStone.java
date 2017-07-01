@@ -1,6 +1,7 @@
 package com.toomasr.sgf4j.board;
 
 import javafx.geometry.Pos;
+import javafx.scene.control.Control;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -12,7 +13,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class BoardStone extends StackPane {
-  public static final int width = 29;
+  private static final int HIGHLIGHT_MULTIPLIER = 3;
+  private static final double RADIUS_MULTIPLIER = 2.32;
+  private static final double FONT_MULTIPLIER = 1.8125;
+
+  public static int width = 29;
 
   private final int x;
   private final int y;
@@ -30,6 +35,8 @@ public class BoardStone extends StackPane {
   private Line lineV;
 
   private Circle starPoint;
+
+  private Rectangle rect;
 
   public BoardStone(int x, int y) {
     super();
@@ -49,14 +56,18 @@ public class BoardStone extends StackPane {
 
   private void setSize(int width) {
     setMinWidth(width);
-    setMaxWidth(width);
+    setMaxWidth(Control.USE_PREF_SIZE);
+
     setMinHeight(width);
-    setMaxHeight(width);
+    setMaxHeight(Control.USE_PREF_SIZE);
   }
 
   private void init() {
-    // the board stone is based on a white rectangle
-    Rectangle rect = new Rectangle(width, width);
+    if (rect != null) {
+      getChildren().remove(rect);
+    }
+
+    rect = new Rectangle(width, width);
     rect.setFill(Color.WHITE);
     getChildren().add(rect);
 
@@ -65,6 +76,10 @@ public class BoardStone extends StackPane {
   }
 
   private void addTheBgIntersection() {
+    if (lineH != null) {
+      getChildren().remove(lineH);
+    }
+
     lineH = new Line(0, width / 2, width, width / 2);
     if (x == 1) {
       // the + 1 is to compensate for the stroke width overflow
@@ -82,6 +97,10 @@ public class BoardStone extends StackPane {
       setAlignment(lineH, Pos.CENTER);
     }
 
+    if (lineV != null) {
+      getChildren().remove(lineV);
+    }
+
     lineV = new Line(width / 2, 0, width / 2, width);
     if (y == 1) {
       // the -1 is compensate for the stroke width overflow
@@ -97,6 +116,10 @@ public class BoardStone extends StackPane {
     else {
       getChildren().add(lineV);
       setAlignment(lineV, Pos.CENTER);
+    }
+
+    if (starPoint != null) {
+      getChildren().remove(starPoint);
     }
 
     if ((x == 4 && y == 4) || (x == 16 && y == 4)
@@ -118,7 +141,7 @@ public class BoardStone extends StackPane {
 
   public void addOverlayText(String str) {
     text = new Text(str);
-    Font font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, 16);
+    Font font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, width/FONT_MULTIPLIER);
     text.setFont(font);
     text.setStroke(Color.SADDLEBROWN);
     text.setFill(Color.SADDLEBROWN);
@@ -148,6 +171,9 @@ public class BoardStone extends StackPane {
 
   public void placeStone(StoneState stoneState) {
     this.squareState = stoneState;
+
+    stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
+    highLightCircle.setRadius(width / HIGHLIGHT_MULTIPLIER);
 
     stoneCircle.setStroke(Color.BLACK);
     stoneCircle.setStrokeType(StrokeType.OUTSIDE);
@@ -194,5 +220,35 @@ public class BoardStone extends StackPane {
   @Override
   public String toString() {
     return "BoardStone [x=" + x + ", y=" + y + ", squareState=" + squareState + "]";
+  }
+
+  public int getSize() {
+    return width;
+  }
+
+  public void resizeTo(int newSize) {
+    this.width = newSize;
+    setPrefSize((double) newSize, (double) newSize);
+    init();
+
+    if (getChildren().contains(stoneCircle)) {
+      getChildren().remove(stoneCircle);
+
+      stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
+      getChildren().add(stoneCircle);
+    }
+
+    if (getChildren().contains(highLightCircle)) {
+      getChildren().remove(highLightCircle);
+
+      highLightCircle.setRadius(width / HIGHLIGHT_MULTIPLIER);
+      getChildren().add(highLightCircle);
+    }
+
+    if (getChildren().contains(text)) {
+      String str = text.getText();
+      removeOverlayText();
+      addOverlayText(str);
+    }
   }
 }

@@ -31,9 +31,11 @@ import com.toomasr.sgf4j.util.Encoding;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -47,9 +49,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 
 public class MainUI {
@@ -62,7 +64,7 @@ public class MainUI {
   private VirtualBoard virtualBoard;
   private BoardStone[][] board;
   private GridPane movePane;
-  private GridPane boardPane = new GridPane();
+  private GridPane boardPane;
 
   private Map<GameNode, TreeStone> nodeToTreeStone = new HashMap<>();
 
@@ -74,6 +76,10 @@ public class MainUI {
   private Label whitePlayerName;
   private Label blackPlayerName;
   private Label label;
+
+  private TilePane buttonPane;
+
+  private ScrollPane treePane;
 
   public MainUI() {
     board = new BoardStone[19][19];
@@ -105,17 +111,32 @@ public class MainUI {
     VBox fileTreePane = generateFileTreePane();
     leftVBox.getChildren().addAll(fileTreePane);
     VBox.setVgrow(fileTreePane, Priority.ALWAYS);
+    HBox.setHgrow(fileTreePane, Priority.SOMETIMES);
 
     // constructing the center box
-    //centerVBox.setMaxWidth(640);
+    // centerVBox.setMaxWidth(640);
     centerVBox.setMinWidth(640);
+    centerVBox.setMaxWidth(900);
 
-    boardPane = generateBoardPane(boardPane);
-    TilePane buttonPane = generateButtonPane();
-    ScrollPane treePane = generateMoveTreePane();
+    boardPane = new GridPane();
+    boardPane.setHgap(0.0);
+    boardPane.setVgap(0.0);
+    boardPane.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
+      int newSize = resizeBoardPane(boardPane, oldValue, newValue);
+      buttonPane.setPrefWidth(newSize*21);
+      treePane.setPrefWidth(newSize*21);
+    });
+
+    generateBoardPane(boardPane);
+
+    buttonPane = generateButtonPane();
+    treePane = generateMoveTreePane();
 
     centerVBox.getChildren().addAll(boardPane, buttonPane, treePane);
-    VBox.setVgrow(treePane, Priority.ALWAYS);
+    VBox.setVgrow(boardPane, Priority.ALWAYS);
+    HBox.setHgrow(boardPane, Priority.ALWAYS);
+
+    VBox.setVgrow(treePane, Priority.SOMETIMES);
     VBox.setVgrow(buttonPane, Priority.NEVER);
 
     // constructing the right box
@@ -124,10 +145,13 @@ public class MainUI {
     rightVBox.getChildren().addAll(gameMetaInfo, commentArea);
     VBox.setVgrow(commentArea, Priority.ALWAYS);
 
+    // lets put everything into a rootbox!
     HBox rootHBox = new HBox();
     enableKeyboardShortcuts(rootHBox);
     rootHBox.getChildren().addAll(leftVBox, centerVBox, rightVBox);
     HBox.setHgrow(centerVBox, Priority.ALWAYS);
+    HBox.setHgrow(leftVBox, Priority.SOMETIMES);
+    HBox.setHgrow(rightVBox, Priority.SOMETIMES);
 
     VBox rootVbox = new VBox();
     HBox statusBar = generateStatusBar();
@@ -231,14 +255,14 @@ public class MainUI {
     String whiteRating = game.getProperty(SgfProperties.WHITE_PLAYER_RATING);
     String whiteLabel = game.getProperty(SgfProperties.WHITE_PLAYER_NAME);
     if (whiteRating != null) {
-      whiteLabel = whiteLabel + " ["+whiteRating+"]";
+      whiteLabel = whiteLabel + " [" + whiteRating + "]";
     }
     whitePlayerName.setText(whiteLabel);
 
     String blackRating = game.getProperty(SgfProperties.BLACK_PLAYER_RATING);
     String blackLabel = game.getProperty(SgfProperties.BLACK_PLAYER_NAME);
     if (blackRating != null) {
-      blackLabel = blackLabel + " ["+blackRating+"]";
+      blackLabel = blackLabel + " [" + blackRating + "]";
     }
     blackPlayerName.setText(blackLabel);
   }
@@ -286,7 +310,6 @@ public class MainUI {
 
     removePlacementStones(blackStones, whiteStones);
   }
-
 
   private void removePlacementStones(String removeBlack, String removeWhite) {
     if (removeBlack.length() > 0) {
@@ -387,6 +410,7 @@ public class MainUI {
     treePaneScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
     movePane.setMinWidth(640);
+    movePane.setMaxWidth(Control.USE_PREF_SIZE);
 
     return treePaneScrollPane;
   }
@@ -469,6 +493,9 @@ public class MainUI {
     pane.getChildren().add(previousButton);
     pane.getChildren().add(moveNoField);
     pane.getChildren().add(nextButton);
+
+    pane.setMaxWidth(Control.USE_PREF_SIZE);
+
     return pane;
   }
 
@@ -695,7 +722,7 @@ public class MainUI {
     board[moveCoords[0]][moveCoords[1]].deHighLightStone();
   }
 
-  private GridPane generateBoardPane(GridPane boardPane) {
+  private void generateBoardPane(GridPane boardPane) {
     boardPane.getChildren().clear();
 
     for (int i = 0; i < 21; i++) {
@@ -715,7 +742,36 @@ public class MainUI {
         }
       }
     }
-    return boardPane;
+  }
+
+  private int resizeBoardPane(GridPane boardPane, Bounds oldValue, Bounds newValue) {
+    System.out.printf("%s\n", newValue);
+
+    BoardStone stone = (BoardStone) boardPane.getChildren().get(23);
+    int size = stone.getSize();
+    int newSize = size;
+
+    newSize = (int) Math.floor(newValue.getHeight() / 21);
+    if ((int) Math.floor(newValue.getWidth() / 21) < newSize)
+      newSize = (int) Math.floor(newValue.getWidth() / 21);
+
+    System.out.println(size + " " + newSize);
+    if (newSize < size && newSize > 29) {
+      newSize = newSize - 1;
+    }
+
+    for (int i = 0; i < 21 * 21; i++) {
+      if ((i < 22 || i > 418 || i % 21 == 0 || (i + 1) % 21 == 0)) {
+        CoordinateSquare sq = (CoordinateSquare) boardPane.getChildren().get(i);
+        sq.resizeTo(newSize);
+      }
+      else {
+        stone = (BoardStone) boardPane.getChildren().get(i);
+        stone.resizeTo(newSize);
+      }
+
+    }
+    return newSize;
   }
 
   private void enableKeyboardShortcuts(HBox topHBox) {
