@@ -173,7 +173,7 @@ public class BoardStone extends StackPane {
     this.squareState = stoneState;
 
     stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
-    highLightCircle.setRadius(width / HIGHLIGHT_MULTIPLIER);
+    highLightCircle.setRadius(( width / HIGHLIGHT_MULTIPLIER ) - 1.5);
 
     stoneCircle.setStroke(Color.BLACK);
     stoneCircle.setStrokeType(StrokeType.OUTSIDE);
