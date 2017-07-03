@@ -81,6 +81,10 @@ public class MainUI {
 
   private ScrollPane treePane;
 
+  private VBox leftVBox;
+
+  private VBox rightVBox;
+
   public MainUI() {
     board = new BoardStone[19][19];
 
@@ -98,17 +102,18 @@ public class MainUI {
      */
     Insets paneInsets = new Insets(5, 0, 0, 0);
 
-    VBox leftVBox = new VBox(5);
+    leftVBox = new VBox(5);
     leftVBox.setPadding(paneInsets);
 
     VBox centerVBox = new VBox(5);
     centerVBox.setPadding(paneInsets);
 
-    VBox rightVBox = new VBox(5);
+    rightVBox = new VBox(5);
     rightVBox.setPadding(paneInsets);
 
     // constructing the left box
     VBox fileTreePane = generateFileTreePane();
+    leftVBox.setMaxWidth(450);
     leftVBox.getChildren().addAll(fileTreePane);
     VBox.setVgrow(fileTreePane, Priority.ALWAYS);
     HBox.setHgrow(fileTreePane, Priority.SOMETIMES);
@@ -116,16 +121,11 @@ public class MainUI {
     // constructing the center box
     // centerVBox.setMaxWidth(640);
     centerVBox.setMinWidth(640);
-    centerVBox.setMaxWidth(900);
 
     boardPane = new GridPane();
+    boardPane.setAlignment(Pos.BASELINE_CENTER);
     boardPane.setHgap(0.0);
     boardPane.setVgap(0.0);
-    boardPane.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
-      int newSize = resizeBoardPane(boardPane, oldValue, newValue);
-      buttonPane.setPrefWidth(newSize*21);
-      treePane.setPrefWidth(newSize*21);
-    });
 
     generateBoardPane(boardPane);
 
@@ -136,13 +136,14 @@ public class MainUI {
     VBox.setVgrow(boardPane, Priority.ALWAYS);
     HBox.setHgrow(boardPane, Priority.ALWAYS);
 
-    VBox.setVgrow(treePane, Priority.SOMETIMES);
+    VBox.setVgrow(treePane, Priority.ALWAYS);
     VBox.setVgrow(buttonPane, Priority.NEVER);
 
     // constructing the right box
     VBox gameMetaInfo = generateGameMetaInfo();
     TextArea commentArea = generateCommentPane();
     rightVBox.getChildren().addAll(gameMetaInfo, commentArea);
+    rightVBox.setMaxWidth(450);
     VBox.setVgrow(commentArea, Priority.ALWAYS);
 
     // lets put everything into a rootbox!
@@ -150,7 +151,7 @@ public class MainUI {
     enableKeyboardShortcuts(rootHBox);
     rootHBox.getChildren().addAll(leftVBox, centerVBox, rightVBox);
     HBox.setHgrow(centerVBox, Priority.ALWAYS);
-    HBox.setHgrow(leftVBox, Priority.SOMETIMES);
+    HBox.setHgrow(leftVBox, Priority.ALWAYS);
     HBox.setHgrow(rightVBox, Priority.SOMETIMES);
 
     VBox rootVbox = new VBox();
@@ -158,6 +159,12 @@ public class MainUI {
     rootVbox.getChildren().addAll(rootHBox, statusBar);
     VBox.setVgrow(rootHBox, Priority.ALWAYS);
     VBox.setVgrow(statusBar, Priority.NEVER);
+
+    rootVbox.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
+      int newSize = resizeBoardPane(boardPane, oldValue, newValue);
+      buttonPane.setPrefWidth(newSize * 21);
+      treePane.setPrefWidth(newSize * 21);
+    });
 
     return rootVbox;
   }
@@ -745,19 +752,35 @@ public class MainUI {
   }
 
   private int resizeBoardPane(GridPane boardPane, Bounds oldValue, Bounds newValue) {
-    System.out.printf("%s\n", newValue);
+    System.out.println(newValue);
+    // I calculate the high because for some reason the
+    // rightVBox and leftVBox in certain circumstances will
+    // overflow the centerHBox - by subtracting from total
+    // I'll get the visual width of the center box
+    double width = newValue.getWidth() - leftVBox.getWidth() - rightVBox.getWidth();
+    double height = boardPane.getHeight();
+
+    // when resized super quickly with the mouse then
+    // sometimes the width can become negative even
+    // this is dumb but just in case lets have a minimum
+    if (width < 650) {
+      width = 650;
+    }
+
+    int newSize = (int) Math.floor(height / 21);
+    if ((int) Math.floor(width / 21) < newSize)
+      newSize = (int) Math.floor(width / 21);
+
+    // anything less than 29 will look ugly with the
+    // current code
+    if (newSize < 29) {
+      newSize = 29;
+    }
 
     BoardStone stone = (BoardStone) boardPane.getChildren().get(23);
-    int size = stone.getSize();
-    int newSize = size;
-
-    newSize = (int) Math.floor(newValue.getHeight() / 21);
-    if ((int) Math.floor(newValue.getWidth() / 21) < newSize)
-      newSize = (int) Math.floor(newValue.getWidth() / 21);
-
-    System.out.println(size + " " + newSize);
-    if (newSize < size && newSize > 29) {
-      newSize = newSize - 1;
+    // if size actually hasn't changed then no need to resize everything
+    if (stone.getSize() == newSize) {
+      return newSize;
     }
 
     for (int i = 0; i < 21 * 21; i++) {
