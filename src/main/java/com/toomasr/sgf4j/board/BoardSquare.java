@@ -1,5 +1,6 @@
 package com.toomasr.sgf4j.board;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Control;
 import javafx.scene.layout.StackPane;
@@ -45,6 +46,7 @@ public class BoardSquare extends StackPane {
     this.y = y;
 
     setSize(width);
+    setPadding(Insets.EMPTY);
     setAlignment(Pos.CENTER);
 
     // some defaults
@@ -56,9 +58,11 @@ public class BoardSquare extends StackPane {
 
   private void setSize(int width) {
     setMinWidth(width);
+    setPrefWidth(width);
     setMaxWidth(Control.USE_PREF_SIZE);
 
     setMinHeight(width);
+    setPrefHeight(width);
     setMaxHeight(Control.USE_PREF_SIZE);
   }
 

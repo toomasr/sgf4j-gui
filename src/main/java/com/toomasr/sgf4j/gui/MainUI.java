@@ -752,7 +752,6 @@ public class MainUI {
   }
 
   private int resizeBoardPane(GridPane boardPane, Bounds oldValue, Bounds newValue) {
-    System.out.println(newValue);
     // I calculate the high because for some reason the
     // rightVBox and leftVBox in certain circumstances will
     // overflow the centerHBox - by subtracting from total
