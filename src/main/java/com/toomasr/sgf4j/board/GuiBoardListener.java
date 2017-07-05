@@ -6,7 +6,7 @@ import com.toomasr.sgf4j.gui.MainUI;
 import com.toomasr.sgf4j.parser.GameNode;
 
 public class GuiBoardListener implements BoardListener {
-  private BoardStone[][] board;
+  private BoardSquare[][] board;
   private MainUI mainUI;
 
   public GuiBoardListener(MainUI mainUI) {

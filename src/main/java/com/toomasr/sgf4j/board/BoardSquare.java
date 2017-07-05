@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class BoardStone extends StackPane {
+public class BoardSquare extends StackPane {
   private static final int HIGHLIGHT_MULTIPLIER = 3;
   private static final double RADIUS_MULTIPLIER = 2.32;
   private static final double FONT_MULTIPLIER = 1.8125;
@@ -38,7 +38,7 @@ public class BoardStone extends StackPane {
 
   private Rectangle rect;
 
-  public BoardStone(int x, int y) {
+  public BoardSquare(int x, int y) {
     super();
 
     this.x = x;

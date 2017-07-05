@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.SgfProperties;
-import com.toomasr.sgf4j.board.BoardStone;
+import com.toomasr.sgf4j.board.BoardSquare;
 import com.toomasr.sgf4j.board.BoardCoordinateLabel;
 import com.toomasr.sgf4j.board.GuiBoardListener;
 import com.toomasr.sgf4j.board.StoneState;
@@ -62,7 +62,7 @@ public class MainUI {
   private GameNode prevMove = null;
   private Game game;
   private VirtualBoard virtualBoard;
-  private BoardStone[][] board;
+  private BoardSquare[][] board;
   private GridPane movePane;
   private GridPane boardPane;
 
@@ -86,7 +86,7 @@ public class MainUI {
   private VBox rightVBox;
 
   public MainUI() {
-    board = new BoardStone[19][19];
+    board = new BoardSquare[19][19];
 
     virtualBoard = new VirtualBoard();
     virtualBoard.addBoardListener(new GuiBoardListener(this));
@@ -734,7 +734,7 @@ public class MainUI {
 
     for (int i = 0; i < 21; i++) {
       if (i > 1 && i < 20) {
-        board[i - 1] = new BoardStone[19];
+        board[i - 1] = new BoardSquare[19];
       }
 
       for (int j = 0; j < 21; j++) {
@@ -743,7 +743,7 @@ public class MainUI {
           boardPane.add(btn, i, j);
         }
         else {
-          BoardStone btn = new BoardStone(i, j);
+          BoardSquare btn = new BoardSquare(i, j);
           boardPane.add(btn, i, j);
           board[i - 1][j - 1] = btn;
         }
@@ -777,7 +777,7 @@ public class MainUI {
       newSize = 29;
     }
 
-    BoardStone stone = (BoardStone) boardPane.getChildren().get(23);
+    BoardSquare stone = (BoardSquare) boardPane.getChildren().get(23);
     // if size actually hasn't changed then no need to resize everything
     if (stone.getSize() == newSize) {
       return newSize;
@@ -789,7 +789,7 @@ public class MainUI {
         sq.resizeTo(newSize);
       }
       else {
-        stone = (BoardStone) boardPane.getChildren().get(i);
+        stone = (BoardSquare) boardPane.getChildren().get(i);
         stone.resizeTo(newSize);
       }
 
@@ -816,7 +816,7 @@ public class MainUI {
     });
   }
 
-  public BoardStone[][] getBoard() {
+  public BoardSquare[][] getBoard() {
     return this.board;
   }
 }

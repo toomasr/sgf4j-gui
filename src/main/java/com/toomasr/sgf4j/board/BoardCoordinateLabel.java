@@ -11,7 +11,7 @@ public class BoardCoordinateLabel extends Canvas {
   private int y;
 
   public BoardCoordinateLabel(int x, int y) {
-    super(BoardStone.width, BoardStone.width);
+    super(BoardSquare.width, BoardSquare.width);
     this.x = x;
     this.y = y;
 
@@ -27,16 +27,16 @@ public class BoardCoordinateLabel extends Canvas {
     GraphicsContext gc = this.getGraphicsContext2D();
 
     if (x == 0) {
-      gc.fillText(y + "", BoardStone.width / 2 - 0.15 * BoardStone.width, BoardStone.width / 2 + 0.1 * BoardStone.width);
+      gc.fillText(y + "", BoardSquare.width / 2 - 0.15 * BoardSquare.width, BoardSquare.width / 2 + 0.1 * BoardSquare.width);
     }
     else if (x == 20) {
-      gc.fillText(y + "", 0.15 * BoardStone.width, BoardStone.width / 2 + 0.1 * BoardStone.width);
+      gc.fillText(y + "", 0.15 * BoardSquare.width, BoardSquare.width / 2 + 0.1 * BoardSquare.width);
     }
     else if (y == 0) {
-      gc.fillText(Util.alphabet[x - 1], BoardStone.width / 3, BoardStone.width / 2 + 0.3 * BoardStone.width);
+      gc.fillText(Util.alphabet[x - 1], BoardSquare.width / 3, BoardSquare.width / 2 + 0.3 * BoardSquare.width);
     }
     else if (y == 20) {
-      gc.fillText(Util.alphabet[x - 1], BoardStone.width / 3, BoardStone.width / 3 + 0.2 * BoardStone.width);
+      gc.fillText(Util.alphabet[x - 1], BoardSquare.width / 3, BoardSquare.width / 3 + 0.2 * BoardSquare.width);
     }
   }
 
