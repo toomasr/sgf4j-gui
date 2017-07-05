@@ -5,12 +5,12 @@ import com.toomasr.sgf4j.parser.Util;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
-public class CoordinateSquare extends Canvas {
+public class BoardCoordinateLabel extends Canvas {
 
   private int x;
   private int y;
 
-  public CoordinateSquare(int x, int y) {
+  public BoardCoordinateLabel(int x, int y) {
     super(BoardStone.width, BoardStone.width);
     this.x = x;
     this.y = y;

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.SgfProperties;
 import com.toomasr.sgf4j.board.BoardStone;
-import com.toomasr.sgf4j.board.CoordinateSquare;
+import com.toomasr.sgf4j.board.BoardCoordinateLabel;
 import com.toomasr.sgf4j.board.GuiBoardListener;
 import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.board.VirtualBoard;
@@ -739,7 +739,7 @@ public class MainUI {
 
       for (int j = 0; j < 21; j++) {
         if (i == 0 || j == 0 || i == 20 || j == 20) {
-          CoordinateSquare btn = new CoordinateSquare(i, j);
+          BoardCoordinateLabel btn = new BoardCoordinateLabel(i, j);
           boardPane.add(btn, i, j);
         }
         else {
@@ -785,7 +785,7 @@ public class MainUI {
 
     for (int i = 0; i < 21 * 21; i++) {
       if ((i < 22 || i > 418 || i % 21 == 0 || (i + 1) % 21 == 0)) {
-        CoordinateSquare sq = (CoordinateSquare) boardPane.getChildren().get(i);
+        BoardCoordinateLabel sq = (BoardCoordinateLabel) boardPane.getChildren().get(i);
         sq.resizeTo(newSize);
       }
       else {
