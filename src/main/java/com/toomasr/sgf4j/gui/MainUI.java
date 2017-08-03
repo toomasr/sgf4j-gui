@@ -239,7 +239,7 @@ public class MainUI {
     virtualBoard = new VirtualBoard();
     virtualBoard.addBoardListener(new GuiBoardListener(this));
 
-    initEmptyBoard();
+    initNewBoard();
 
     // construct the tree of the moves
     nodeToTreeStone = new HashMap<>();
@@ -274,7 +274,7 @@ public class MainUI {
     blackPlayerName.setText(blackLabel);
   }
 
-  public void initEmptyBoard() {
+  public void initNewBoard() {
     generateBoardPane(boardPane);
     placePreGameStones(game);
   }
@@ -296,6 +296,12 @@ public class MainUI {
   private void placePlacementGameStones(String addBlack, String addWhite) {
     if (addBlack.length() > 0) {
       String[] blackStones = addBlack.split(",");
+      // actually the stones can also contain not just points but sequences
+      // of points so instead of a coordinate like dq, dr, ds it might contain
+      // dq:ds. Let us translate those to actual single coordinates!
+      if (addBlack.contains(":")) {
+        blackStones = Util.coordSequencesToSingle(addBlack);
+      }
       for (int i = 0; i < blackStones.length; i++) {
         int[] moveCoords = Util.alphaToCoords(blackStones[i]);
         virtualBoard.placeStone(StoneState.BLACK, moveCoords[0], moveCoords[1]);
@@ -304,6 +310,12 @@ public class MainUI {
 
     if (addWhite.length() > 0) {
       String[] whiteStones = addWhite.split(",");
+      // actually the stones can also contain not just points but sequences
+      // of points so instead of a coordinate like dq, dr, ds it might contain
+      // dq:ds. Let us translate those to actual single coordinates!
+      if (addWhite.contains(":")) {
+        whiteStones = Util.coordSequencesToSingle(addWhite);
+      }
       for (int i = 0; i < whiteStones.length; i++) {
         int[] moveCoords = Util.alphaToCoords(whiteStones[i]);
         virtualBoard.placeStone(StoneState.WHITE, moveCoords[0], moveCoords[1]);

@@ -36,6 +36,6 @@ public class GuiBoardListener implements BoardListener {
 
   @Override
   public void initInitialPosition() {
-    mainUI.initEmptyBoard();
+    mainUI.initNewBoard();
   }
 }
