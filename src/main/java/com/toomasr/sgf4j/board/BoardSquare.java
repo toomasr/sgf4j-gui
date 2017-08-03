@@ -144,6 +144,10 @@ public class BoardSquare extends StackPane {
   }
 
   public void addOverlayText(String str) {
+    // there are SGF files that place multiple labels
+    // on a single square - right now won't support that
+    // and always showing the latest one
+    removeOverlayText();
     text = new Text(str);
     Font font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, width/FONT_MULTIPLIER);
     text.setFont(font);
