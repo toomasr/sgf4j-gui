@@ -1,6 +1,7 @@
 package com.toomasr.sgf4j.filetree;
 
 import java.io.File;
+import java.util.Arrays;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,10 +37,10 @@ public class FileTreeItem extends TreeItem<File> {
           return true;
         return false;
       });
-      
+
       if (files != null) {
         ObservableList<TreeItem<File>> children = FXCollections.observableArrayList();
-
+        Arrays.sort(files);
         for (File childFile : files) {
           FileTreeItem fileTreeItem = new FileTreeItem(childFile);
           children.add(fileTreeItem);
