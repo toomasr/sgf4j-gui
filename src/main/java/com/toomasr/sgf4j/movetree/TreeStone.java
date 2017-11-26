@@ -12,7 +12,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-public class TreeStone extends StackPane {
+public class TreeStone extends StackPane implements MoveTreeElement {
   public static final int width = 30;
 
   private StoneState squareState = StoneState.EMPTY;
@@ -27,14 +27,14 @@ public class TreeStone extends StackPane {
   public TreeStone(GameNode node) {
     this(node, true, true);
   }
-  
+
   public TreeStone(GameNode node, boolean drawLeftArrow, boolean drawRightArrow) {
     super();
     setFocusTraversable(false);
 
     this.drawLeftArrow = drawLeftArrow;
     this.drawRightArrow = drawRightArrow;
-    
+
     if ("W".equals(node.getColor())) {
       this.squareState = StoneState.WHITE;
     }
@@ -109,7 +109,7 @@ public class TreeStone extends StackPane {
     getChildren().add(circle);
 
     Font font = Font.font(Font.getDefault().getFamily(), 12);
-    
+
     Text text = new Text("" + node.getMoveNo());
     text.setFont(font);
     text.setStroke(strokeColor);
@@ -127,12 +127,12 @@ public class TreeStone extends StackPane {
   public GameNode getMove() {
     return node;
   }
-  
+
   /**
    * Utility method to create a TreeStone with the proper
    * arrows present. Takes into account whether there is a
    * preceding or a following node.
-   * 
+   *
    * @param node
    * @return a properly initialised TreeStone.
    */
@@ -153,7 +153,7 @@ public class TreeStone extends StackPane {
     TreeStone treeStone = new TreeStone(node, drawLeftArrow, drawRightArrow);
     return treeStone;
   }
-  
+
   @Override
   public String toString() {
     return "TreeStone [squareState=" + squareState + ", stonePointWidth=" + stonePointWidth + ", moveNo=" + node.getMoveNo() + "]";

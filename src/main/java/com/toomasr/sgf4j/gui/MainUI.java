@@ -3,8 +3,10 @@ package com.toomasr.sgf4j.gui;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,15 +15,16 @@ import org.slf4j.LoggerFactory;
 
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.SgfProperties;
-import com.toomasr.sgf4j.board.BoardSquare;
 import com.toomasr.sgf4j.board.BoardCoordinateLabel;
+import com.toomasr.sgf4j.board.BoardSquare;
 import com.toomasr.sgf4j.board.GuiBoardListener;
 import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.board.VirtualBoard;
 import com.toomasr.sgf4j.filetree.FileTreeView;
-import com.toomasr.sgf4j.movetree.EmptyTriangle;
+import com.toomasr.sgf4j.movetree.GameStartNoopStone;
 import com.toomasr.sgf4j.movetree.GlueStone;
 import com.toomasr.sgf4j.movetree.GlueStoneType;
+import com.toomasr.sgf4j.movetree.MoveTreeElement;
 import com.toomasr.sgf4j.movetree.TreeStone;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
@@ -50,6 +53,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -66,7 +70,8 @@ public class MainUI {
   private GridPane movePane;
   private GridPane boardPane;
 
-  private Map<GameNode, TreeStone> nodeToTreeStone = new HashMap<>();
+  private Map<GameNode, MoveTreeElement> nodeToTreeStone = new HashMap<>();
+  private List<MoveTreeElement> highlightedTreeStone = new ArrayList<>();
 
   private TextArea commentArea;
 
@@ -244,7 +249,10 @@ public class MainUI {
     // construct the tree of the moves
     nodeToTreeStone = new HashMap<>();
     movePane.getChildren().clear();
-    movePane.add(new EmptyTriangle(), 0, 0);
+    GameStartNoopStone rootStone = new GameStartNoopStone(currentMove);
+    movePane.add(rootStone, 0, 0);
+    configureMoveTreeElement(currentMove, rootStone);
+    highLightStoneInTree(currentMove);
 
     GameNode rootNode = game.getRootNode();
     populateMoveTreePane(rootNode, 0);
@@ -351,19 +359,13 @@ public class MainUI {
 
   private void populateMoveTreePane(GameNode node, int depth) {
     // we draw out only actual moves
-    if (node.isMove()) {
-      TreeStone treeStone = TreeStone.create(node);
-
-      movePane.add(treeStone, node.getNodeNo(), node.getVisualDepth());
-      nodeToTreeStone.put(node, treeStone);
-
-      treeStone.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-          TreeStone stone = (TreeStone) event.getSource();
-          fastForwardTo(stone.getMove());
-        }
-      });
+    if (node.isMove() || (node.getMoveNo() == -1 && node.getVisualDepth() > -1)) {
+      MoveTreeElement treeStone = TreeStone.create(node);
+      if (node.getMoveNo() == -1) {
+        treeStone = new GameStartNoopStone(node);
+      }
+      movePane.add((StackPane) treeStone, node.getNodeNo(), node.getVisualDepth());
+      configureMoveTreeElement(node, treeStone);
     }
 
     // and recursively draw the next node on this line of play
@@ -413,6 +415,17 @@ public class MainUI {
     }
   }
 
+  private void configureMoveTreeElement(GameNode node, MoveTreeElement treeStone) {
+    nodeToTreeStone.put(node, treeStone);
+    ((StackPane) treeStone).addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        MoveTreeElement stone = (MoveTreeElement) event.getSource();
+        fastForwardTo(stone.getMove());
+      }
+    });
+  }
+
   /*
    * Generates the boilerplate for the move tree pane. The
    * pane is actually populated during game initialization.
@@ -444,11 +457,17 @@ public class MainUI {
 
     placePreGameStones(game);
 
-    deHighLightStoneInTree(currentMove);
+    deHighLightStoneInTree();
     removeMarkersForNode(currentMove);
 
-    virtualBoard.fastForwardTo(move);
-    highLightStoneOnBoard(move);
+    if (move.getMoveNo() != -1) {
+      virtualBoard.fastForwardTo(move);
+      highLightStoneOnBoard(move);
+    }
+    else {
+      virtualBoard.fastForwardTo(move);
+      highLightStoneInTree(move);
+    }
   }
 
   private VBox generateFileTreePane() {
@@ -565,12 +584,12 @@ public class MainUI {
       removeMarkersForNode(prevMove);
     }
 
-    if (move != null && !move.isPass() && !move.isPlacementMove()) {
+    if (move != null && !move.isPass() && !move.isPlacementMove() && move.getMoveString() != null) {
       highLightStoneOnBoard(move);
     }
 
     // highlight stone in the tree pane
-    deHighLightStoneInTree(prevMove);
+    deHighLightStoneInTree();
     highLightStoneInTree(move);
 
     if (move != null && (move.getProperty("AB") != null || move.getProperty("AW") != null)) {
@@ -603,7 +622,7 @@ public class MainUI {
 
     removePreGameStones(move);
 
-    deHighLightStoneInTree(move);
+    deHighLightStoneInTree();
     highLightStoneInTree(prevMove);
 
     ensureVisibleForActiveTreeNode(prevMove);
@@ -613,7 +632,7 @@ public class MainUI {
 
   private void ensureVisibleForActiveTreeNode(GameNode move) {
     if (move != null && move.isMove()) {
-      TreeStone stone = nodeToTreeStone.get(move);
+      StackPane stone = (StackPane) nodeToTreeStone.get(move);
 
       // the move tree is not yet fully operational and some
       // points don't exist in the map yet
@@ -640,18 +659,19 @@ public class MainUI {
   }
 
   private void highLightStoneInTree(GameNode move) {
-    TreeStone stone = nodeToTreeStone.get(move);
+    MoveTreeElement stone = nodeToTreeStone.get(move);
     // can remove the null check at one point when the
     // tree is fully implemented
     if (stone != null) {
       stone.highLight();
       stone.requestFocus();
+      highlightedTreeStone.add(stone);
     }
   }
 
   private void deHighLightStoneInTree(GameNode node) {
     if (node != null && node.isMove()) {
-      TreeStone stone = nodeToTreeStone.get(node);
+      MoveTreeElement stone = nodeToTreeStone.get(node);
       if (stone != null) {
         stone.deHighLight();
       }
@@ -659,6 +679,13 @@ public class MainUI {
         throw new RuntimeException("Unable to find node for move " + node);
       }
     }
+  }
+
+  private void deHighLightStoneInTree() {
+    for (MoveTreeElement stone : highlightedTreeStone) {
+      stone.deHighLight();
+    }
+    highlightedTreeStone.clear();
   }
 
   private void showCommentForMove(GameNode move) {
