@@ -141,7 +141,7 @@ public class TreeStone extends StackPane implements MoveTreeElement {
     boolean drawRightArrow = true;
 
     // no left arrow if no move preceding
-    if (node.getPrevNode() == null || (node.getPrevNode() != null && !node.getPrevNode().isMove())) {
+    if (node.getPrevNode() == null) {
       drawLeftArrow = false;
     }
 
