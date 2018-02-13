@@ -691,7 +691,7 @@ public class MainUI {
   private void showCommentForMove(GameNode move) {
     String comment = move.getProperty("C");
     if (comment == null) {
-      if (move.getPrevNode() == null && game.getProperty("C") != null) {
+      if (move.getParentNode() == null && game.getProperty("C") != null) {
         comment = game.getProperty("C");
       }
       else {
