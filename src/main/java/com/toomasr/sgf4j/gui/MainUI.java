@@ -13,6 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.toomasr.sgf4j.SGF4JApp;
 import com.toomasr.sgf4j.Sgf;
 import com.toomasr.sgf4j.SgfProperties;
 import com.toomasr.sgf4j.board.BoardCoordinateLabel;
@@ -40,6 +41,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TextArea;
@@ -90,7 +94,11 @@ public class MainUI {
 
   private VBox rightVBox;
 
-  public MainUI() {
+  private SGF4JApp app;
+
+  public MainUI(SGF4JApp app) {
+    this.app = app;
+
     board = new BoardSquare[19][19];
 
     virtualBoard = new VirtualBoard();
@@ -159,7 +167,9 @@ public class MainUI {
     HBox.setHgrow(leftVBox, Priority.ALWAYS);
     HBox.setHgrow(rightVBox, Priority.SOMETIMES);
 
-    VBox rootVbox = new VBox();
+    MenuBar menuBar = buildTopMenu();
+
+    VBox rootVbox = new VBox(menuBar);
     HBox statusBar = generateStatusBar();
     rootVbox.getChildren().addAll(rootHBox, statusBar);
     VBox.setVgrow(rootHBox, Priority.ALWAYS);
@@ -172,6 +182,21 @@ public class MainUI {
     });
 
     return rootVbox;
+  }
+
+  private MenuBar buildTopMenu() {
+    MenuBar menuBar = new MenuBar();
+    Menu fileMenu = new Menu("File");
+    MenuItem restartUIMenuItem = new MenuItem("Restart UI");
+
+    restartUIMenuItem.setOnAction(e -> {
+      System.out.println("Restarting UI");
+      app.scheduleRestartUI();
+    });
+
+    fileMenu.getItems().add(restartUIMenuItem);
+    menuBar.getMenus().add(fileMenu);
+    return menuBar;
   }
 
   private HBox generateStatusBar() {

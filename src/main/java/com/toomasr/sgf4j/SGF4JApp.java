@@ -8,6 +8,7 @@ import com.toomasr.sgf4j.gui.MainUI;
 import com.toomasr.sgf4j.properties.AppState;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.DragEvent;
@@ -18,6 +19,7 @@ import javafx.stage.Stage;
 
 public class SGF4JApp extends Application {
   private static final Logger logger = LoggerFactory.getLogger(SGF4JApp.class);
+  private Scene scene;
 
   public SGF4JApp() {
   }
@@ -30,11 +32,11 @@ public class SGF4JApp extends Application {
     primaryStage.setMinWidth(1200);
     primaryStage.setMinHeight(750);
 
-    MainUI visualBoard = new MainUI();
-    Pane topHBox = visualBoard.buildUI();
-    visualBoard.initGame();
+    MainUI mainUIBuilder = new MainUI(this);
+    Pane mainUI = mainUIBuilder.buildUI();
+    mainUIBuilder.initGame();
 
-    Scene scene = new Scene(topHBox, 630, 750);
+    this.scene = new Scene(mainUI, 630, 750);
     scene.getStylesheets().add("/styles.css");
 
     enableFileDragging(scene);
@@ -107,5 +109,25 @@ public class SGF4JApp extends Application {
         event.consume();
       }
     });
+  }
+
+  public void scheduleRestartUI() {
+    Platform.runLater(() -> {
+      restartUI();
+    });
+  }
+
+  private void restartUI() {
+    MainUI mainUIBuilder = new MainUI(this);
+    Pane mainUI;
+    try {
+      mainUI = mainUIBuilder.buildUI();
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    mainUIBuilder.initGame();
+    this.scene.setRoot(mainUI);
+
   }
 }
