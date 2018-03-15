@@ -194,7 +194,6 @@ public class MainUI {
     MenuItem restartUIMenuItem = new MenuItem("Restart UI");
 
     restartUIMenuItem.setOnAction(e -> {
-      System.out.println("Restarting UI");
       app.scheduleRestartUI();
     });
 
