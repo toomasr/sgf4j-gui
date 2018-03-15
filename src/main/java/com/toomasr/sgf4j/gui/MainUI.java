@@ -168,6 +168,10 @@ public class MainUI {
     HBox.setHgrow(rightVBox, Priority.SOMETIMES);
 
     MenuBar menuBar = buildTopMenu();
+    final String os = System.getProperty ("os.name");
+    if (os != null && os.startsWith ("Mac")) {
+      menuBar.useSystemMenuBarProperty ().set (true);
+    }
 
     VBox rootVbox = new VBox(menuBar);
     HBox statusBar = generateStatusBar();
