@@ -27,10 +27,10 @@ public class BoardCoordinateLabel extends Canvas {
     GraphicsContext gc = this.getGraphicsContext2D();
 
     if (x == 0) {
-      gc.fillText(y + "", BoardSquare.width / 2 - 0.15 * BoardSquare.width, BoardSquare.width / 2 + 0.1 * BoardSquare.width);
+      gc.fillText(20-y + "", BoardSquare.width / 2 - 0.15 * BoardSquare.width, BoardSquare.width / 2 + 0.1 * BoardSquare.width);
     }
     else if (x == 20) {
-      gc.fillText(y + "", 0.15 * BoardSquare.width, BoardSquare.width / 2 + 0.1 * BoardSquare.width);
+      gc.fillText(20-y + "", 0.15 * BoardSquare.width, BoardSquare.width / 2 + 0.1 * BoardSquare.width);
     }
     else if (y == 0) {
       gc.fillText(Util.alphabet[x - 1], BoardSquare.width / 3, BoardSquare.width / 2 + 0.3 * BoardSquare.width);
