@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -29,6 +30,7 @@ public class SGF4JApp extends Application {
     AppState.getInstance().loadState();
 
     primaryStage.setTitle("SGF4J");
+    primaryStage.getIcons().add(new Image(SGF4JApp.class.getResourceAsStream("/icon.png")));
     primaryStage.setMinWidth(1200);
     primaryStage.setMinHeight(750);
 
