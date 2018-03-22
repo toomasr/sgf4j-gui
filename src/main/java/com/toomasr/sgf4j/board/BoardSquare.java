@@ -184,7 +184,6 @@ public class BoardSquare extends StackPane {
     highLightCircle.setRadius(( width / HIGHLIGHT_MULTIPLIER ) - 1.5);
 
     stoneCircle.setStroke(Color.BLACK);
-    stoneCircle.setStrokeType(StrokeType.OUTSIDE);
     stoneCircle.setStrokeWidth(strokeWidth);
     stoneCircle.setVisible(true);
 
