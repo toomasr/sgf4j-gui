@@ -52,6 +52,14 @@ public class BoardSquare extends StackPane {
     // some defaults
     highLightCircle.setStrokeType(StrokeType.INSIDE);
     highLightCircle.setStrokeWidth(strokeWidth);
+    highLightCircle.setLayoutX(0.0);
+    highLightCircle.setLayoutY(0.0);
+    highLightCircle.setSmooth(true);
+
+    stoneCircle.setStrokeType(StrokeType.INSIDE);
+    stoneCircle.setStroke(Color.BLACK);
+    stoneCircle.setStrokeWidth(strokeWidth);
+    stoneCircle.setSmooth(true);
 
     init();
   }
@@ -183,8 +191,7 @@ public class BoardSquare extends StackPane {
     stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
     highLightCircle.setRadius(( width / HIGHLIGHT_MULTIPLIER ) - 1.5);
 
-    stoneCircle.setStroke(Color.BLACK);
-    stoneCircle.setStrokeWidth(strokeWidth);
+
     stoneCircle.setVisible(true);
 
     if (stoneState.equals(StoneState.WHITE)) {
@@ -193,8 +200,6 @@ public class BoardSquare extends StackPane {
     else {
       stoneCircle.setFill(Color.BLACK);
     }
-
-    stoneCircle.setSmooth(true);
 
     if (!getChildren().contains(stoneCircle)) {
       getChildren().add(stoneCircle);
