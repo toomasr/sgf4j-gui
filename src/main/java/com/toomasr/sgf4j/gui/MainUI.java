@@ -78,6 +78,7 @@ public class MainUI {
   private List<MoveTreeElement> highlightedTreeStone = new ArrayList<>();
 
   private TextArea commentArea;
+  private TextField moveNoField = new TextField("0");
 
   private Button previousButton;
 
@@ -533,7 +534,6 @@ public class MainUI {
     pane.setAlignment(Pos.CENTER);
     pane.getStyleClass().add("bordered");
 
-    TextField moveNoField = new TextField("0");
     moveNoField.setFocusTraversable(false);
     moveNoField.setMaxWidth(40);
     moveNoField.setEditable(false);
@@ -631,6 +631,11 @@ public class MainUI {
 
     showMarkersForMove(move);
     nextButton.requestFocus();
+
+    String moveNo = move.getMoveNo()+"";
+    if (move.getMoveNo() < 0)
+      moveNo = "0";
+    moveNoField.setText(moveNo);
   }
 
   public void undoMove(GameNode move, GameNode prevMove) {
