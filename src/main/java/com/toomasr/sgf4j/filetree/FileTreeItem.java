@@ -33,7 +33,7 @@ public class FileTreeItem extends TreeItem<File> {
           return false;
         if (pathname.isDirectory())
           return true;
-        if (pathname.getAbsoluteFile().toString().endsWith("sgf"))
+        if (pathname.getAbsoluteFile().toString().toLowerCase().endsWith("sgf"))
           return true;
         return false;
       });
