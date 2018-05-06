@@ -293,6 +293,8 @@ public class MainUI {
 
     treePaneScrollPane.setHvalue(0);
     treePaneScrollPane.setVvalue(0);
+
+    moveNoField.setText("0");
   }
 
   private void showMetaInfoForGame(Game game) {
