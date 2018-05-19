@@ -3,6 +3,9 @@ package com.toomasr.sgf4j.filetree;
 import java.io.File;
 import java.util.Arrays;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
@@ -14,6 +17,23 @@ public class FileTreeItem extends TreeItem<File> {
 
   public FileTreeItem(File file) {
     super(file);
+
+    expandedProperty().addListener(new ChangeListener<Boolean>() {
+
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        BooleanProperty bb = (BooleanProperty) observable;
+        TreeItem<File> t = (TreeItem<File>) bb.getBean();
+
+        // remove old children
+        t.getChildren().clear();
+
+        // add refreshed children
+        ObservableList<TreeItem<File>> children = generateChildrenForItem(t);
+        t.getChildren().addAll(children);
+      }
+
+    });
   }
 
   @Override
