@@ -59,12 +59,12 @@ public class FileTreeView extends TreeView<File> {
       }
     }
 
-    TreeItem<File> treeItem = findMatchinTreeItemFromView(fakeRoot.getChildren(), rightLocation);
+    TreeItem<File> treeItem = findMatchingTreeItemFromView(fakeRoot.getChildren(), rightLocation);
     getSelectionModel().select(treeItem);
     scrollTo(getSelectionModel().getSelectedIndex());
   }
 
-  private TreeItem<File> findMatchinTreeItemFromView(List<TreeItem<File>> root, final File homeFolder) {
+  private TreeItem<File> findMatchingTreeItemFromView(List<TreeItem<File>> root, final File homeFolder) {
     List<String> pathElems = tokenizePath(homeFolder);
     TreeItem<File> rtrn = null;
 
