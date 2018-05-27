@@ -1,6 +1,7 @@
 package com.toomasr.sgf4j.gui;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
@@ -96,6 +98,10 @@ public class MainUI {
   private VBox rightVBox;
 
   private SGF4JApp app;
+
+  private Path activeGameSgf;
+
+  private String activeGameEncoding;
 
   public MainUI(SGF4JApp app) {
     this.app = app;
@@ -169,9 +175,9 @@ public class MainUI {
     HBox.setHgrow(rightVBox, Priority.SOMETIMES);
 
     MenuBar menuBar = buildTopMenu();
-    final String os = System.getProperty ("os.name");
-    if (os != null && os.startsWith ("Mac")) {
-      menuBar.useSystemMenuBarProperty ().set (true);
+    final String os = System.getProperty("os.name");
+    if (os != null && os.startsWith("Mac")) {
+      menuBar.useSystemMenuBarProperty().set(true);
     }
 
     VBox rootVbox = new VBox(menuBar);
@@ -198,9 +204,31 @@ public class MainUI {
       app.scheduleRestartUI();
     });
 
+    MenuItem saveGame = new MenuItem("Save");
+    saveGame.setOnAction(e -> {
+      if (saveSgf(this.game, this.activeGameSgf, this.activeGameEncoding)) {
+        updateStatus("Saved game to "+this.activeGameSgf.getFileName());
+      }
+      else {
+        updateStatus("File not saved "+this.activeGameSgf.getFileName());
+      }
+
+    });
+
+    fileMenu.getItems().add(saveGame);
+    fileMenu.getItems().add(new SeparatorMenuItem());
     fileMenu.getItems().add(restartUIMenuItem);
+
     menuBar.getMenus().add(fileMenu);
     return menuBar;
+  }
+
+  private boolean saveSgf(Game game, Path outputFile, String encoding) {
+    if (activeGameSgf != null && Files.exists(outputFile)) {
+      Sgf.writeToFile(game, outputFile, encoding, true);
+      return true;
+    }
+    return false;
   }
 
   private HBox generateStatusBar() {
@@ -264,6 +292,9 @@ public class MainUI {
     String encoding = Encoding.determineEncoding(pathToSgf, awtFont);
     logger.debug("Determined encoding {}", encoding);
     updateStatus(String.format("Loaded %s with encoding %s", pathToSgf.getFileName(), encoding));
+
+    this.activeGameSgf = pathToSgf;
+    this.activeGameEncoding = encoding;
     this.game = Sgf.createFromPath(pathToSgf, encoding);
 
     currentMove = this.game.getRootNode();
@@ -634,7 +665,7 @@ public class MainUI {
     showMarkersForMove(move);
     nextButton.requestFocus();
 
-    String moveNo = move.getMoveNo()+"";
+    String moveNo = move.getMoveNo() + "";
     if (move.getMoveNo() < 0)
       moveNo = "0";
     moveNoField.setText(moveNo);
