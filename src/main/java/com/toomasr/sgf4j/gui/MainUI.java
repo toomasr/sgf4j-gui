@@ -782,6 +782,10 @@ public class MainUI {
     // the L property is actually not used in FF3 and FF4
     // but I own many SGFs that still have it
     String markerProp = move.getProperty("L");
+    // the L property is sometimes attached to the game instead part instead
+    if (markerProp == null && move.getParentNode() == null && game.getProperty("L") != null) {
+      markerProp = game.getProperty("L");
+    }
     if (markerProp != null) {
       int alphaIdx = 0;
       String[] markers = markerProp.split("\\]\\[");
@@ -804,7 +808,10 @@ public class MainUI {
     // the L property is actually not used in FF3 and FF4
     // but I own many SGFs that still have it
     String markerProp = node.getProperty("L");
-
+    // the L property is sometimes attached to the game instead part instead
+    if (markerProp == null && node.getParentNode() == null && game.getProperty("L") != null) {
+      markerProp = game.getProperty("L");
+    }
     if (markerProp != null) {
       String[] markers = markerProp.split("\\]\\[");
       for (int i = 0; i < markers.length; i++) {
