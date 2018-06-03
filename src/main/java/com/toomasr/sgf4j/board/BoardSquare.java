@@ -52,14 +52,15 @@ public class BoardSquare extends StackPane {
     // some defaults
     highLightCircle.setStrokeType(StrokeType.INSIDE);
     highLightCircle.setStrokeWidth(strokeWidth);
-    highLightCircle.setLayoutX(0.0);
-    highLightCircle.setLayoutY(0.0);
     highLightCircle.setSmooth(true);
 
     stoneCircle.setStrokeType(StrokeType.INSIDE);
     stoneCircle.setStroke(Color.BLACK);
     stoneCircle.setStrokeWidth(strokeWidth);
     stoneCircle.setSmooth(true);
+
+    double[] xy = updateLayoutBounds(stoneCircle);
+    updateLayoutBounds(highLightCircle, xy[0], xy[1]);
 
     init();
   }
@@ -188,9 +189,8 @@ public class BoardSquare extends StackPane {
   public void placeStone(StoneState stoneState) {
     this.squareState = stoneState;
 
-    stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
+    stoneCircle.setRadius(  width / RADIUS_MULTIPLIER);
     highLightCircle.setRadius(( width / HIGHLIGHT_MULTIPLIER ) - 1.5);
-
 
     stoneCircle.setVisible(true);
 
@@ -204,6 +204,8 @@ public class BoardSquare extends StackPane {
     if (!getChildren().contains(stoneCircle)) {
       getChildren().add(stoneCircle);
     }
+    double[] xy = updateLayoutBounds(stoneCircle);
+    updateLayoutBounds(highLightCircle, xy[0], xy[1]);
   }
 
   public void highLightStone() {
@@ -221,6 +223,8 @@ public class BoardSquare extends StackPane {
     if (!getChildren().contains(highLightCircle)) {
       getChildren().add(highLightCircle);
     }
+    double[] xy = updateLayoutBounds(stoneCircle);
+    updateLayoutBounds(highLightCircle, xy[0], xy[1]);
   }
 
   public void deHighLightStone() {
@@ -238,22 +242,58 @@ public class BoardSquare extends StackPane {
     return width;
   }
 
+  private void updateLayoutBounds(Circle circle, double x, double y) {
+    circle.setLayoutX(x);
+    circle.setLayoutY(y);
+  }
+
+  private double[] updateLayoutBounds(Circle circle) {
+    double layoutX = 0 - circle.getLayoutBounds().getMinX();
+    double layoutY = 0 - circle.getLayoutBounds().getMinY();
+    if (layoutX < 0 )
+      layoutX = 0d;
+    if (layoutY < 0)
+      layoutY = 0d;
+    updateLayoutBounds(circle, layoutX, layoutY);
+    return new double[] {layoutX, layoutY};
+  }
+
   public void resizeTo(int newSize) {
-    this.width = newSize;
+    BoardSquare.width = newSize;
     setPrefSize((double) newSize, (double) newSize);
+    setMinSize((double) newSize, (double) newSize);
+    setMaxSize((double) newSize, (double) newSize);
     init();
+
+    double layoutX = -1;
+    double layoutY = -1;
 
     if (getChildren().contains(stoneCircle)) {
       getChildren().remove(stoneCircle);
 
       stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
+
+      updateLayoutBounds(stoneCircle);
       getChildren().add(stoneCircle);
     }
 
     if (getChildren().contains(highLightCircle)) {
       getChildren().remove(highLightCircle);
-
       highLightCircle.setRadius(width / HIGHLIGHT_MULTIPLIER);
+
+      if (layoutX >= 0) {
+        // nice, computed from last round
+      }
+      else {
+        layoutX = 0 - highLightCircle.getLayoutBounds().getMinX();
+        layoutY = 0 - highLightCircle.getLayoutBounds().getMinY();
+        if (layoutX < 0 )
+          layoutX = 0d;
+        if (layoutY < 0)
+          layoutY = 0d;
+      }
+      updateLayoutBounds(highLightCircle, layoutX, layoutY);
+
       getChildren().add(highLightCircle);
     }
 
