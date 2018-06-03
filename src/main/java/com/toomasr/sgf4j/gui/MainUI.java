@@ -209,10 +209,10 @@ public class MainUI {
     MenuItem saveGame = new MenuItem("Save");
     saveGame.setOnAction(e -> {
       if (saveSgf(this.game, this.activeGameSgf, this.activeGameEncoding)) {
-        updateStatus("Saved game to "+this.activeGameSgf.getFileName());
+        updateStatus("Saved game to " + this.activeGameSgf.getFileName());
       }
       else {
-        updateStatus("File not saved "+this.activeGameSgf.getFileName());
+        updateStatus("File not saved " + this.activeGameSgf.getFileName());
       }
 
     });
@@ -284,6 +284,15 @@ public class MainUI {
     commentArea.setFocusTraversable(false);
     commentArea.setWrapText(true);
     commentArea.setPrefSize(300, 600);
+
+    commentArea.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        System.out.println(Util.sgfEscapeText(newValue));
+        System.out.println(currentMove.getProperty("C"));
+      }
+    });
+    ;
 
     return commentArea;
   }
