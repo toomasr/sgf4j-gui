@@ -288,8 +288,8 @@ public class MainUI {
     commentArea.textProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        System.out.println(Util.sgfEscapeText(newValue));
-        System.out.println(currentMove.getProperty("C"));
+        //System.out.println(Util.sgfEscapeText(newValue));
+        //System.out.println(currentMove.getProperty("C"));
       }
     });
     ;
