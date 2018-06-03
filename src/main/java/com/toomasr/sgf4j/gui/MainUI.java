@@ -32,8 +32,10 @@ import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
 import com.toomasr.sgf4j.properties.AppState;
-import com.toomasr.sgf4j.util.Encoding;
+import com.toomasr.sgf4j.util.TextUtils;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -289,7 +291,7 @@ public class MainUI {
   private void initializeGame(Path pathToSgf) {
     Font font = Font.getDefault();
     java.awt.Font awtFont = new java.awt.Font(font.getName(), java.awt.Font.PLAIN, (int) font.getSize());
-    String encoding = Encoding.determineEncoding(pathToSgf, awtFont);
+    String encoding = TextUtils.determineEncoding(pathToSgf, awtFont);
     logger.debug("Determined encoding {}", encoding);
     updateStatus(String.format("Loaded %s with encoding %s", pathToSgf.getFileName(), encoding));
 
@@ -764,16 +766,8 @@ public class MainUI {
         comment = "";
       }
     }
-    // some helpers I used for parsing needs to be undone - see the Parser.java
-    // in sgf4j project
-    comment = comment.replaceAll("@@@@@", "\\\\\\[");
-    comment = comment.replaceAll("#####", "\\\\\\]");
 
-    // lets do some replacing - see http://www.red-bean.com/sgf/sgf4.html#text
-    comment = comment.replaceAll("\\\\\n", "");
-    comment = comment.replaceAll("\\\\:", ":");
-    comment = comment.replaceAll("\\\\\\]", "]");
-    comment = comment.replaceAll("\\\\\\[", "[");
+    comment = Util.sgfUnescapeText(comment);
 
     commentArea.setText(comment);
   }

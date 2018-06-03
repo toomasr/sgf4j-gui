@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Encoding {
-  private static final Logger logger = LoggerFactory.getLogger(Encoding.class);
+public class TextUtils {
+  private static final Logger logger = LoggerFactory.getLogger(TextUtils.class);
   public static String determineEncoding(Path pathToSgf, Font font) {
 
     try {
@@ -29,5 +29,4 @@ public class Encoding {
     }
     return "utf-8";
   }
-
 }
