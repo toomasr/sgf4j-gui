@@ -78,7 +78,7 @@ public class MainUI {
   private GridPane movePane;
   private GridPane boardPane;
 
-  private Map<GameNode, MoveTreeElement> nodeToTreeStone = new HashMap<>();
+  private Map<Integer, MoveTreeElement> nodeToTreeStone = new HashMap<>();
   private List<MoveTreeElement> highlightedTreeStone = new ArrayList<>();
 
   private TextArea commentArea;
@@ -318,7 +318,7 @@ public class MainUI {
     initNewBoard();
 
     // construct the tree of the moves
-    nodeToTreeStone = new HashMap<>();
+    nodeToTreeStone = new HashMap<Integer, MoveTreeElement>();
     movePane.getChildren().clear();
     GameStartNoopStone rootStone = new GameStartNoopStone(currentMove);
     movePane.add(rootStone, 0, 0);
@@ -489,7 +489,7 @@ public class MainUI {
   }
 
   private void configureMoveTreeElement(GameNode node, MoveTreeElement treeStone) {
-    nodeToTreeStone.put(node, treeStone);
+    nodeToTreeStone.put(node.getId(), treeStone);
     ((StackPane) treeStone).addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
       @Override
       public void handle(MouseEvent event) {
@@ -705,7 +705,7 @@ public class MainUI {
 
   private void ensureVisibleForActiveTreeNode(GameNode move) {
     if (move != null && move.isMove()) {
-      StackPane stone = (StackPane) nodeToTreeStone.get(move);
+      StackPane stone = (StackPane) nodeToTreeStone.get(move.getId());
 
       // the move tree is not yet fully operational and some
       // points don't exist in the map yet
@@ -732,7 +732,7 @@ public class MainUI {
   }
 
   private void highLightStoneInTree(GameNode move) {
-    MoveTreeElement stone = nodeToTreeStone.get(move);
+    MoveTreeElement stone = nodeToTreeStone.get(move.getId());
     // can remove the null check at one point when the
     // tree is fully implemented
     if (stone != null) {
