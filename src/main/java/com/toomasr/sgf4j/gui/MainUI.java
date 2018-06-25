@@ -669,11 +669,7 @@ public class MainUI {
       placePlacementStones(move);
     }
 
-    // show the associated comment
-    showCommentForMove(move);
-
     // handle the prev and new markers
-
     showMarkersForMove(move);
     nextButton.requestFocus();
 
