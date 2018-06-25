@@ -677,6 +677,9 @@ public class MainUI {
     if (move.getMoveNo() < 0)
       moveNo = "0";
     moveNoField.setText(moveNo);
+
+    // show the associated comment
+    showCommentForMove(move);
   }
 
   public void undoMove(GameNode move, GameNode prevMove) {
@@ -741,17 +744,8 @@ public class MainUI {
       stone.requestFocus();
       highlightedTreeStone.add(stone);
     }
-  }
-
-  private void deHighLightStoneInTree(GameNode node) {
-    if (node != null && node.isMove()) {
-      MoveTreeElement stone = nodeToTreeStone.get(node);
-      if (stone != null) {
-        stone.deHighLight();
-      }
-      else {
-        throw new RuntimeException("Unable to find node for move " + node);
-      }
+    else {
+      System.out.println("Cannot find stone for "+move.hashCode());
     }
   }
 
