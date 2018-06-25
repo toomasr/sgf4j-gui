@@ -614,9 +614,7 @@ public class MainUI {
       prevMove = currentMove;
       currentMove = currentMove.getNextNode();
       virtualBoard.makeMove(currentMove, prevMove);
-
-      // scroll the scrollpane to make
-      // the highlighted move visible
+      // scroll the move tree to make the highlighted move visible
       ensureVisibleForActiveTreeNode(currentMove);
     }
   }
@@ -626,9 +624,7 @@ public class MainUI {
       prevMove = currentMove;
       currentMove = currentMove.getChildren().iterator().next();
       virtualBoard.makeMove(currentMove, prevMove);
-
-      // scroll the scrollpane to make
-      // the highlighted move visible
+      // scroll the move tree to make the highlighted move visible
       ensureVisibleForActiveTreeNode(currentMove);
     }
   }
