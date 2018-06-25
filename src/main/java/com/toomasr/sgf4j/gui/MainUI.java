@@ -323,8 +323,13 @@ public class MainUI {
     initNewBoard();
 
     // construct the tree of the moves
-    nodeToTreeStone = new HashMap<Integer, MoveTreeElement>();
-    movePane.getChildren().clear();
+    nodeToTreeStone.clear();
+    // I used to just getChildren().clear() but it produces problems
+    // See https://stackoverflow.com/questions/36862282/javafx-8-duplicate-children-after-getchildren-clear
+    // So instead I'm generating a fresh pane
+    movePane = generateMovePane();
+    treePaneScrollPane.setContent(movePane);
+
     GameStartNoopStone rootStone = new GameStartNoopStone(currentMove);
     movePane.add(rootStone, 0, 0);
     configureMoveTreeElement(currentMove, rootStone);
@@ -509,20 +514,25 @@ public class MainUI {
    * pane is actually populated during game initialization.
    */
   private ScrollPane generateMoveTreePane() {
-
-    movePane = new GridPane();
-    movePane.setPadding(new Insets(0, 0, 0, 0));
-    movePane.setStyle("-fx-background-color: white");
+    movePane = generateMovePane();
 
     treePaneScrollPane = new ScrollPane(movePane);
     treePaneScrollPane.setPrefHeight(150);
     treePaneScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
     treePaneScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
-    movePane.setMinWidth(640);
-    movePane.setMaxWidth(Control.USE_PREF_SIZE);
-
     return treePaneScrollPane;
+  }
+
+  private GridPane generateMovePane() {
+    GridPane gridPane = new GridPane();
+
+    gridPane.setPadding(new Insets(0, 0, 0, 0));
+    gridPane.setStyle("-fx-background-color: white");
+    gridPane.setMinWidth(640);
+    gridPane.setMaxWidth(Control.USE_PREF_SIZE);
+
+    return gridPane;
   }
 
   private void fastForwardTo(GameNode move) {
