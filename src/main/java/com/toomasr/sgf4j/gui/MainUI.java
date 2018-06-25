@@ -911,6 +911,11 @@ public class MainUI {
     topHBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
+        if (event.isMetaDown())
+          return;
+        // wow, this is bad style but works right now
+        if (commentArea.isFocused())
+          return;
         if (event.getEventType().equals(KeyEvent.KEY_PRESSED)) {
           if (event.getCode().equals(KeyCode.LEFT)) {
             handlePreviousPressed();
