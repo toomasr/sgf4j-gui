@@ -517,7 +517,8 @@ public class MainUI {
     movePane = generateMovePane();
 
     treePaneScrollPane = new ScrollPane(movePane);
-    treePaneScrollPane.setPrefHeight(150);
+    treePaneScrollPane.setMinHeight(150);
+    treePaneScrollPane.setPrefHeight(250);
     treePaneScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
     treePaneScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
