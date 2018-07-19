@@ -883,6 +883,7 @@ public class MainUI {
       newSize = 29;
     }
 
+    // comparing to a random square - good enough, they are all the same size
     BoardSquare stone = (BoardSquare) boardPane.getChildren().get(23);
     // if size actually hasn't changed then no need to resize everything
     if (stone.getSize() == newSize) {
