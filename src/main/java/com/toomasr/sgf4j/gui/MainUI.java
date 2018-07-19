@@ -869,22 +869,12 @@ public class MainUI {
   }
 
   private int resizeBoardPane(GridPane boardPane, Bounds oldValue, Bounds newValue) {
-    // I calculate the high because for some reason the
-    // rightVBox and leftVBox in certain circumstances will
-    // overflow the centerHBox - by subtracting from total
-    // I'll get the visual width of the center box
     double width = newValue.getWidth() - leftVBox.getWidth() - rightVBox.getWidth();
-    double height = boardPane.getHeight();
+    double height = newValue.getHeight() - treePane.getHeight() - buttonPane.getHeight();
 
-    // when resized super quickly with the mouse then
-    // sometimes the width can become negative even
-    // this is dumb but just in case lets have a minimum
-    if (width < 650) {
-      width = 650;
-    }
-
-    int newSize = (int) Math.floor(height / 21);
-    if ((int) Math.floor(width / 21) < newSize)
+    int minSize = (int) Math.min(width, height);
+    int newSize = (int) Math.floor(minSize / 21);
+    if ((int) Math.floor(minSize / 21) < newSize)
       newSize = (int) Math.floor(width / 21);
 
     // anything less than 29 will look ugly with the
