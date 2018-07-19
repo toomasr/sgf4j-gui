@@ -756,7 +756,7 @@ public class MainUI {
       highlightedTreeStone.add(stone);
     }
     else {
-      System.out.println("Cannot find stone for "+move.hashCode());
+      System.out.println("Cannot find stone for " + move.hashCode());
     }
   }
 
