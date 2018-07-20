@@ -158,8 +158,10 @@ public class MainUI {
     VBox.setVgrow(boardPane, Priority.ALWAYS);
     HBox.setHgrow(boardPane, Priority.ALWAYS);
 
+
     VBox.setVgrow(treePane, Priority.ALWAYS);
     VBox.setVgrow(buttonPane, Priority.NEVER);
+    HBox.setHgrow(buttonPane, Priority.ALWAYS);
 
     // constructing the right box
     VBox gameMetaInfo = generateGameMetaInfo();
@@ -619,8 +621,6 @@ public class MainUI {
     pane.getChildren().add(previousButton);
     pane.getChildren().add(moveNoField);
     pane.getChildren().add(nextButton);
-
-    pane.setMaxWidth(Control.USE_PREF_SIZE);
 
     return pane;
   }
