@@ -1,20 +1,17 @@
 package com.toomasr.sgf4j.board;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Control;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class BoardSquare extends StackPane {
-  private static final int HIGHLIGHT_MULTIPLIER = 3;
+  private static final double HIGHLIGHT_MULTIPLIER = 3.1;
   private static final double RADIUS_MULTIPLIER = 2.32;
   private static final double FONT_MULTIPLIER = 1.8125;
 
@@ -27,9 +24,9 @@ public class BoardSquare extends StackPane {
 
   private double strokeWidth = 1.5;
 
-  private Circle highLightCircle = new Circle(15, 15, 10);
+  private Circle highLightCircle = new Circle(15, 15, width / HIGHLIGHT_MULTIPLIER);
   // main visual stone - a circle shape
-  private Circle stoneCircle = new Circle(15, 15, 12.5);
+  private Circle stoneCircle = new Circle(15, 15, width / RADIUS_MULTIPLIER);
 
   private Text text;
   private Line lineH;
@@ -37,17 +34,13 @@ public class BoardSquare extends StackPane {
 
   private Circle starPoint;
 
-  private Rectangle rect;
-
   public BoardSquare(int x, int y) {
     super();
 
     this.x = x;
     this.y = y;
 
-    setSize(width);
-    setPadding(Insets.EMPTY);
-    setAlignment(Pos.CENTER);
+    setStyle("-fx-background-color: #ffffff");
 
     // some defaults
     highLightCircle.setStrokeType(StrokeType.INSIDE);
@@ -59,32 +52,6 @@ public class BoardSquare extends StackPane {
     stoneCircle.setStrokeWidth(strokeWidth);
     stoneCircle.setSmooth(true);
 
-    double[] xy = updateLayoutBounds(stoneCircle);
-    updateLayoutBounds(highLightCircle, xy[0], xy[1]);
-
-    init();
-  }
-
-  private void setSize(int width) {
-    setMinWidth(width);
-    setPrefWidth(width);
-    setMaxWidth(Control.USE_PREF_SIZE);
-
-    setMinHeight(width);
-    setPrefHeight(width);
-    setMaxHeight(Control.USE_PREF_SIZE);
-  }
-
-  private void init() {
-    if (rect != null) {
-      getChildren().remove(rect);
-    }
-
-    rect = new Rectangle(width, width);
-    rect.setFill(Color.WHITE);
-    getChildren().add(rect);
-
-    // we add the lines that make up the intersection on each rectangle
     addTheBgIntersection();
   }
 
@@ -158,7 +125,7 @@ public class BoardSquare extends StackPane {
     // and always showing the latest one
     removeOverlayText();
     text = new Text(str);
-    Font font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, width/FONT_MULTIPLIER);
+    Font font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, width / FONT_MULTIPLIER);
     text.setFont(font);
     text.setStroke(Color.SADDLEBROWN);
     text.setFill(Color.SADDLEBROWN);
@@ -189,8 +156,8 @@ public class BoardSquare extends StackPane {
   public void placeStone(StoneState stoneState) {
     this.squareState = stoneState;
 
-    stoneCircle.setRadius(  width / RADIUS_MULTIPLIER);
-    highLightCircle.setRadius(( width / HIGHLIGHT_MULTIPLIER ) - 1.5);
+    stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
+    highLightCircle.setRadius(width / HIGHLIGHT_MULTIPLIER);
 
     stoneCircle.setVisible(true);
 
@@ -204,8 +171,6 @@ public class BoardSquare extends StackPane {
     if (!getChildren().contains(stoneCircle)) {
       getChildren().add(stoneCircle);
     }
-    double[] xy = updateLayoutBounds(stoneCircle);
-    updateLayoutBounds(highLightCircle, xy[0], xy[1]);
   }
 
   public void highLightStone() {
@@ -223,8 +188,6 @@ public class BoardSquare extends StackPane {
     if (!getChildren().contains(highLightCircle)) {
       getChildren().add(highLightCircle);
     }
-    double[] xy = updateLayoutBounds(stoneCircle);
-    updateLayoutBounds(highLightCircle, xy[0], xy[1]);
   }
 
   public void deHighLightStone() {
@@ -242,58 +205,19 @@ public class BoardSquare extends StackPane {
     return width;
   }
 
-  private void updateLayoutBounds(Circle circle, double x, double y) {
-    circle.setLayoutX(x);
-    circle.setLayoutY(y);
-  }
-
-  private double[] updateLayoutBounds(Circle circle) {
-    double layoutX = 0 - circle.getLayoutBounds().getMinX();
-    double layoutY = 0 - circle.getLayoutBounds().getMinY();
-    if (layoutX < 0 )
-      layoutX = 0d;
-    if (layoutY < 0)
-      layoutY = 0d;
-    updateLayoutBounds(circle, layoutX, layoutY);
-    return new double[] {layoutX, layoutY};
-  }
-
   public void resizeTo(int newSize) {
     BoardSquare.width = newSize;
-    setPrefSize((double) newSize, (double) newSize);
-    setMinSize((double) newSize, (double) newSize);
-    setMaxSize((double) newSize, (double) newSize);
-    init();
+    addTheBgIntersection();
 
-    double layoutX = -1;
-    double layoutY = -1;
-
+    stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
     if (getChildren().contains(stoneCircle)) {
       getChildren().remove(stoneCircle);
-
-      stoneCircle.setRadius(width / RADIUS_MULTIPLIER);
-
-      updateLayoutBounds(stoneCircle);
       getChildren().add(stoneCircle);
     }
 
+    highLightCircle.setRadius(width / HIGHLIGHT_MULTIPLIER);
     if (getChildren().contains(highLightCircle)) {
       getChildren().remove(highLightCircle);
-      highLightCircle.setRadius(width / HIGHLIGHT_MULTIPLIER);
-
-      if (layoutX >= 0) {
-        // nice, computed from last round
-      }
-      else {
-        layoutX = 0 - highLightCircle.getLayoutBounds().getMinX();
-        layoutY = 0 - highLightCircle.getLayoutBounds().getMinY();
-        if (layoutX < 0 )
-          layoutX = 0d;
-        if (layoutY < 0)
-          layoutY = 0d;
-      }
-      updateLayoutBounds(highLightCircle, layoutX, layoutY);
-
       getChildren().add(highLightCircle);
     }
 
