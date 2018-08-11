@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import com.toomasr.sgf4j.gui.MainUI;
 import com.toomasr.sgf4j.properties.AppState;
 
+import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -29,6 +30,7 @@ public class SGF4JApp extends Application {
   public void start(Stage primaryStage) throws Exception {
     AppState.getInstance().loadState();
 
+    SvgImageLoaderFactory.install();
     primaryStage.setTitle("SGF4J");
     primaryStage.getIcons().add(new Image(SGF4JApp.class.getResourceAsStream("/icon.png")));
     primaryStage.setMinWidth(1200);
