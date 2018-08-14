@@ -35,13 +35,13 @@ public class SGF4JApp extends Application {
     primaryStage.setTitle("SGF4J");
     primaryStage.getIcons().add(new Image(SGF4JApp.class.getResourceAsStream("/icon.png")));
     primaryStage.setMinWidth(1200);
-    primaryStage.setMinHeight(750);
+    primaryStage.setMinHeight(900);
 
     MainUI mainUIBuilder = new MainUI(this);
     Pane mainUI = mainUIBuilder.buildUI();
     mainUIBuilder.initGame();
 
-    this.scene = new Scene(mainUI, 630, 750);
+    this.scene = new Scene(mainUI);
     scene.getStylesheets().add("/styles.css");
 
     enableFileDragging(scene);
