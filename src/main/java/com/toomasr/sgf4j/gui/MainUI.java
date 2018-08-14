@@ -241,6 +241,8 @@ public class MainUI {
     label = new Label("MainUI loaded");
     rtrn.getChildren().add(label);
 
+    rtrn.setMinHeight(20);
+
     return rtrn;
   }
 
