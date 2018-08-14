@@ -158,7 +158,6 @@ public class MainUI {
     VBox.setVgrow(boardPane, Priority.ALWAYS);
     HBox.setHgrow(boardPane, Priority.ALWAYS);
 
-
     VBox.setVgrow(treePane, Priority.ALWAYS);
     VBox.setVgrow(buttonPane, Priority.NEVER);
     HBox.setHgrow(buttonPane, Priority.ALWAYS);
@@ -370,7 +369,7 @@ public class MainUI {
   }
 
   public void initNewBoard() {
-    generateBoardPane(boardPane);
+    resetBoardPane(boardPane);
     placePreGameStones(game);
   }
 
@@ -866,6 +865,14 @@ public class MainUI {
           boardPane.add(btn, i, j);
           board[i - 1][j - 1] = btn;
         }
+      }
+    }
+  }
+
+  private void resetBoardPane(GridPane boardPane) {
+    for (int i = 0; i < 19; i++) {
+      for (int j = 0; j < 19; j++) {
+        board[i][j].reset();
       }
     }
   }
