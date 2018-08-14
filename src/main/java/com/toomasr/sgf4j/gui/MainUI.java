@@ -105,6 +105,8 @@ public class MainUI {
 
   private String activeGameEncoding;
 
+  private VBox rootVbox;
+
   public MainUI(SGF4JApp app) {
     this.app = app;
 
@@ -183,17 +185,11 @@ public class MainUI {
       menuBar.useSystemMenuBarProperty().set(true);
     }
 
-    VBox rootVbox = new VBox(menuBar);
+    rootVbox = new VBox(menuBar);
     HBox statusBar = generateStatusBar();
     rootVbox.getChildren().addAll(rootHBox, statusBar);
     VBox.setVgrow(rootHBox, Priority.ALWAYS);
     VBox.setVgrow(statusBar, Priority.NEVER);
-
-    rootVbox.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
-      int newSize = resizeBoardPane(boardPane, oldValue, newValue);
-      buttonPane.setPrefWidth(newSize * 21);
-      treePane.setPrefWidth(newSize * 21);
-    });
 
     return rootVbox;
   }
@@ -939,5 +935,13 @@ public class MainUI {
 
   public BoardSquare[][] getBoard() {
     return this.board;
+  }
+
+  public void fireUiVisibleEvent() {
+    rootVbox.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
+      int newSize = resizeBoardPane(boardPane, oldValue, newValue);
+      buttonPane.setPrefWidth(newSize * 21);
+      treePane.setPrefWidth(newSize * 21);
+    });
   }
 }

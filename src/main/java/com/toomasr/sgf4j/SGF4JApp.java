@@ -48,6 +48,8 @@ public class SGF4JApp extends Application {
 
     primaryStage.setScene(scene);
     primaryStage.show();
+
+    mainUIBuilder.fireUiVisibleEvent();
   }
 
   @Override
