@@ -197,6 +197,12 @@ public class BoardSquare extends StackPane {
 		}
 	}
 
+	public void reset() {
+	  squareState = StoneState.EMPTY;
+	  getChildren().clear();
+	  addTheBgIntersection();
+	}
+
 	@Override
 	public String toString() {
 		return "BoardStone [x=" + x + ", y=" + y + ", squareState=" + squareState + "]";
