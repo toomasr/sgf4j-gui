@@ -1,3 +1,12 @@
 .bordered {
-	-fx-border-width: 1;
+	-fx-border-width: 1.0;
+}
+
+.scroll-pane {
+	-fx-background: #ffffff;
+    -fx-fit-to-width: false;	 
+	-fx-fit-to-height: false;	 
+	-fx-pannable:	false; 
+	-fx-hbar-policy: as-needed;
+	-fx-vbar-policy: as-needed;
 }
