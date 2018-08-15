@@ -7,6 +7,5 @@
     -fx-fit-to-width: false;	 
 	-fx-fit-to-height: false;	 
 	-fx-pannable:	false; 
-	-fx-hbar-policy: as-needed;
 	-fx-vbar-policy: as-needed;
 }

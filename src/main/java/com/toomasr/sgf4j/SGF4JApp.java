@@ -33,9 +33,9 @@ public class SGF4JApp extends Application {
 
     SvgImageLoaderFactory.install(new PrimitiveDimensionProvider());
     primaryStage.setTitle("SGF4J");
+    primaryStage.setMinWidth(1125);
+    primaryStage.setMinHeight(800);
     primaryStage.getIcons().add(new Image(SGF4JApp.class.getResourceAsStream("/icon.png")));
-    primaryStage.setMinWidth(1200);
-    primaryStage.setMinHeight(900);
 
     MainUI mainUIBuilder = new MainUI(this);
     Pane mainUI = mainUIBuilder.buildUI();

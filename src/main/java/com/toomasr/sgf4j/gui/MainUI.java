@@ -42,7 +42,6 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -160,7 +159,6 @@ public class MainUI {
     VBox.setVgrow(boardPane, Priority.ALWAYS);
     HBox.setHgrow(boardPane, Priority.ALWAYS);
 
-    VBox.setVgrow(treePane, Priority.ALWAYS);
     VBox.setVgrow(buttonPane, Priority.NEVER);
     HBox.setHgrow(buttonPane, Priority.ALWAYS);
 
@@ -175,7 +173,6 @@ public class MainUI {
     HBox rootHBox = new HBox();
     enableKeyboardShortcuts(rootHBox);
     rootHBox.getChildren().addAll(leftVBox, centerVBox, rightVBox);
-    HBox.setHgrow(centerVBox, Priority.ALWAYS);
     HBox.setHgrow(leftVBox, Priority.ALWAYS);
     HBox.setHgrow(rightVBox, Priority.SOMETIMES);
 
@@ -517,8 +514,8 @@ public class MainUI {
 
     treePaneScrollPane = new ScrollPane(movePane);
     treePaneScrollPane.setMinHeight(150);
-    treePaneScrollPane.setPrefHeight(250);
-    treePaneScrollPane.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+    treePaneScrollPane.setPrefHeight(175);
+    treePaneScrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
     treePaneScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
     return treePaneScrollPane;
@@ -528,9 +525,8 @@ public class MainUI {
     GridPane gridPane = new GridPane();
 
     gridPane.setPadding(new Insets(0, 0, 0, 0));
-    gridPane.setStyle("-fx-background-color: white");
-    gridPane.setMinWidth(640);
-    gridPane.setMaxWidth(Control.USE_PREF_SIZE);
+    gridPane.setMinWidth(600);
+    gridPane.setPrefWidth(600);
 
     return gridPane;
   }
