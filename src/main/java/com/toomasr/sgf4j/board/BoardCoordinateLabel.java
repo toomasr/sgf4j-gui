@@ -19,14 +19,14 @@ public class BoardCoordinateLabel extends Canvas {
   }
 
   private void init() {
-    // corner square will stay empty
-    if ((x == 0 && y == 0) || (x == 20 && y == 20) || (x == 0 && y == 20) || (x == 20 && y == 0)) {
-      return;
-    }
-
     GraphicsContext gc = this.getGraphicsContext2D();
 
-    if (x == 0) {
+    // corner square will have an empty string placeholder
+    // if don't put anything then will have alignment issues
+    if ((x == 0 && y == 0) || (x == 20 && y == 20) || (x == 0 && y == 20) || (x == 20 && y == 0)) {
+      gc.fillText(" ", BoardSquare.width / 2 - 0.05 * BoardSquare.width, BoardSquare.width / 2 + 0.3 * BoardSquare.width);
+    }
+    else if (x == 0) {
       gc.fillText(20-y + "", BoardSquare.width / 2 - 0.15 * BoardSquare.width, BoardSquare.width / 2 + 0.1 * BoardSquare.width);
     }
     else if (x == 20) {
