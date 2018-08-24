@@ -165,6 +165,11 @@ public class BoardSquare extends StackPane {
 	}
 
 	public void deHighLightStone() {
+	    // sometimes deHighlight can be called on a stone
+	    // that does not exist on the board. Let's not add
+	    // a stone in that circumstances and exist early
+	    if (!getChildren().contains(stoneImage))
+	      return;
 		getChildren().remove(stoneImage);
 
 		stoneImage = getImageView(blackStoneImage);
