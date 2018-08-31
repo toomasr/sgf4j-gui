@@ -92,8 +92,6 @@ public class MainUI {
 
   private TilePane buttonPane;
 
-  private ScrollPane treePane;
-
   private VBox leftVBox;
 
   private VBox rightVBox;
@@ -153,9 +151,11 @@ public class MainUI {
     generateBoardPane(boardPane);
 
     buttonPane = generateButtonPane();
-    treePane = generateMoveTreePane();
+    movePane = generateMoveTreePane();
+    treePaneScrollPane = generateMoveTreeScrollPane();
+    treePaneScrollPane.setContent(movePane);
 
-    centerVBox.getChildren().addAll(boardPane, buttonPane, treePane);
+    centerVBox.getChildren().addAll(boardPane, buttonPane, treePaneScrollPane);
     VBox.setVgrow(boardPane, Priority.ALWAYS);
     HBox.setHgrow(boardPane, Priority.ALWAYS);
 
@@ -323,7 +323,7 @@ public class MainUI {
     // I used to just getChildren().clear() but it produces problems
     // See https://stackoverflow.com/questions/36862282/javafx-8-duplicate-children-after-getchildren-clear
     // So instead I'm generating a fresh pane
-    movePane = generateMovePane();
+    movePane = generateMoveTreePane();
     treePaneScrollPane.setContent(movePane);
 
     GameStartNoopStone rootStone = new GameStartNoopStone(currentMove);
@@ -509,24 +509,21 @@ public class MainUI {
    * Generates the boilerplate for the move tree pane. The
    * pane is actually populated during game initialization.
    */
-  private ScrollPane generateMoveTreePane() {
-    movePane = generateMovePane();
+  private ScrollPane generateMoveTreeScrollPane() {
+    ScrollPane scrollPane = new ScrollPane();
+    scrollPane.setMinHeight(150);
+    scrollPane.setPrefHeight(175);
+    scrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
+    scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
-    treePaneScrollPane = new ScrollPane(movePane);
-    treePaneScrollPane.setMinHeight(150);
-    treePaneScrollPane.setPrefHeight(175);
-    treePaneScrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
-    treePaneScrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
-
-    return treePaneScrollPane;
+    return scrollPane;
   }
 
-  private GridPane generateMovePane() {
+  private GridPane generateMoveTreePane() {
     GridPane gridPane = new GridPane();
 
     gridPane.setPadding(new Insets(0, 0, 0, 0));
     gridPane.setMinWidth(600);
-    gridPane.setPrefWidth(600);
 
     return gridPane;
   }
@@ -871,7 +868,7 @@ public class MainUI {
 
   private int resizeBoardPane(GridPane boardPane, Bounds oldValue, Bounds newValue) {
     double width = newValue.getWidth() - leftVBox.getWidth() - rightVBox.getWidth();
-    double height = newValue.getHeight() - treePane.getHeight() - buttonPane.getHeight();
+    double height = newValue.getHeight() - treePaneScrollPane.getHeight() - buttonPane.getHeight();
 
     int minSize = (int) Math.min(width, height);
     int newSize = (int) Math.floor(minSize / 21);
@@ -937,7 +934,6 @@ public class MainUI {
     rootVbox.layoutBoundsProperty().addListener((observable, oldValue, newValue) -> {
       int newSize = resizeBoardPane(boardPane, oldValue, newValue);
       buttonPane.setPrefWidth(newSize * 21);
-      treePane.setPrefWidth(newSize * 21);
     });
   }
 }
