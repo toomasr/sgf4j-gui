@@ -513,6 +513,7 @@ public class MainUI {
     ScrollPane scrollPane = new ScrollPane();
     scrollPane.setMinHeight(150);
     scrollPane.setPrefHeight(175);
+    scrollPane.setPrefWidth(640);
     scrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
     scrollPane.setVbarPolicy(ScrollBarPolicy.AS_NEEDED);
 
