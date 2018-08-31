@@ -4,7 +4,7 @@
   <name>Simple SGF Viewer</name>
   <groupId>com.toomasr</groupId>
   <artifactId>sgf4j-gui</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2</version>
 
   <scm>
     <connection>scm:git:git@github.com:toomasr/sgf4j-gui.git</connection>
