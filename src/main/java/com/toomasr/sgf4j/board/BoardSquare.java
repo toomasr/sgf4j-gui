@@ -12,10 +12,10 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class BoardSquare extends StackPane {
-  private static final Image blackStoneImage = new Image(BoardSquare.class.getResourceAsStream("/black-stone.svg"));
-  private static final Image blackStoneHighlightedImage = new Image(BoardSquare.class.getResourceAsStream("/black-stone-highlighted.svg"));
-  private static final Image whiteStoneImage = new Image(BoardSquare.class.getResourceAsStream("/white-stone.svg"));;
-  private static final Image whiteStoneHighlightedImage = new Image(BoardSquare.class.getResourceAsStream("/white-stone-highlighted.svg"));
+  private static final Image blackStoneImage = new Image(BoardSquare.class.getResourceAsStream("/stones/regular/black-stone.svg"));
+  private static final Image blackStoneHighlightedImage = new Image(BoardSquare.class.getResourceAsStream("/stones/regular/black-stone-highlighted.svg"));
+  private static final Image whiteStoneImage = new Image(BoardSquare.class.getResourceAsStream("/stones/regular/white-stone.svg"));
+  private static final Image whiteStoneHighlightedImage = new Image(BoardSquare.class.getResourceAsStream("/stones/regular/white-stone-highlighted.svg"));
   public static int width = 29;
 
   private static final double FONT_MULTIPLIER = 1.8125;
