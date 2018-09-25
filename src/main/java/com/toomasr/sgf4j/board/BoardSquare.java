@@ -38,12 +38,12 @@ public class BoardSquare extends StackPane {
     this.x = x;
     this.y = y;
 
-    setStyle("-fx-background-color: #ffffff");
+    getStyleClass().add("board-square"); 
 
     addTheBgIntersection();
   }
 
-  private void addTheBgIntersection() {
+	private void addTheBgIntersection() {
     if (lineH != null) {
       getChildren().remove(lineH);
     }

@@ -1,11 +1,52 @@
-.bordered {
-	-fx-border-width: 1.0;
+/* 
+ * JavaFX CSS Reference Guide
+ * 
+ * https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html
+ */
+.root {
+    main-background: lightgray;
+    black-stone: black;
+    white-stone: white;
+    tree-stone: lightgray;
+    tree-stone-active: maroon;
+    scroll-bar-color: derive(black, 70%);
+    -fx-background: main-background;
+}
+
+.virtual-flow {
+  -fx-background-color: main-background;
+}
+
+.virtual-flow > .corner {
+  -fx-background-color: main-background;
 }
 
 .scroll-pane {
-	-fx-background: #ffffff;
-    -fx-fit-to-width: false;	 
-	-fx-fit-to-height: false;	 
-	-fx-pannable:	false; 
-	-fx-vbar-policy: as-needed;
+    -fx-fit-to-width: false;   
+    -fx-fit-to-height: false;  
+    -fx-pannable: false; 
+    -fx-vbar-policy: as-needed;
+}
+
+*.scroll-bar:horizontal, .scroll-bar:vertical{
+    -fx-background-color:transparent;
+}
+
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb {
+    -fx-background-color:scroll-bar-color;
+    -fx-background-insets: 2, 0, 0;
+    -fx-background-radius: 2em;
+}
+
+.text-area .content {
+  -fx-background-color: main-background;  
+}
+
+.tree-cell {
+  -fx-background-color: main-background;
+}
+
+.bordered {
+	-fx-border-width: 1.0;
 }

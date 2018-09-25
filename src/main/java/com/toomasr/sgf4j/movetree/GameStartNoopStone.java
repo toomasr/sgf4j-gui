@@ -41,7 +41,7 @@ public class GameStartNoopStone extends StackPane implements MoveTreeElement {
     double radius = 14 - strokeWidth;
 
     rect = new Rectangle(width, width);
-    rect.setFill(Color.WHITE);
+    rect.setStyle("-fx-fill: tree-stone");
     getChildren().add(rect);
 
     drawRightArrow();
@@ -74,11 +74,11 @@ public class GameStartNoopStone extends StackPane implements MoveTreeElement {
   }
 
   public void highLight() {
-    rect.setFill(Color.SADDLEBROWN);
+    rect.setStyle("-fx-fill: tree-stone-active");
   }
 
   public void deHighLight() {
-    rect.setFill(Color.WHITE);
+  	rect.setStyle("-fx-fill: tree-stone");
   }
 
   @Override

@@ -48,6 +48,8 @@ public class TreeStone extends StackPane implements MoveTreeElement {
     if (node.getProperty("C") != null) {
       drawCommentMarker();
     }
+    
+    getStyleClass().add("tree-stone");
   }
 
   private void drawRightArrow() {
@@ -90,7 +92,7 @@ public class TreeStone extends StackPane implements MoveTreeElement {
     }
 
     rect = new Rectangle(width, width);
-    rect.setFill(Color.WHITE);
+    rect.setStyle("-fx-fill: tree-stone");
     getChildren().add(rect);
 
     if (drawRightArrow) {
@@ -117,11 +119,11 @@ public class TreeStone extends StackPane implements MoveTreeElement {
   }
 
   public void highLight() {
-    rect.setFill(Color.SADDLEBROWN);
+    rect.setStyle("-fx-fill: tree-stone-active");
   }
 
   public void deHighLight() {
-    rect.setFill(Color.WHITE);
+    rect.setStyle("-fx-fill: tree-stone");
   }
 
   public GameNode getMove() {
