@@ -21,6 +21,14 @@
   -fx-background-color: main-background;
 }
 
+.cell:selected {
+	-fx-background-color: orange;	
+}
+
+.cell:hover {
+	-fx-background-color: lightskyblue;	
+}
+
 .scroll-pane {
     -fx-fit-to-width: false;   
     -fx-fit-to-height: false;  
