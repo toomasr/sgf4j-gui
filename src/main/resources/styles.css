@@ -51,6 +51,10 @@
   -fx-background-color: main-background;  
 }
 
+.text-area {
+	-fx-font: 14pt Tahoma;	
+}
+
 .tree-cell {
   -fx-background-color: main-background;
 }
