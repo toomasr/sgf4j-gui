@@ -676,8 +676,6 @@ public class MainUI {
     nextButton.requestFocus();
 
     String moveNo = move.getMoveNo() + "";
-    if (move.getMoveNo() < 0)
-      moveNo = "0";
     moveNoField.setText(moveNo);
 
     // show the associated comment
@@ -703,6 +701,11 @@ public class MainUI {
 
     deHighLightStoneInTree();
     highLightStoneInTree(prevMove);
+
+    String moveNo = prevMove.getMoveNo()+"";
+    if (prevMove.getMoveNo() < 0)
+      moveNo = "0";
+    moveNoField.setText(moveNo);
 
     ensureVisibleForActiveTreeNode(prevMove);
     // rather have previous move button have focus
