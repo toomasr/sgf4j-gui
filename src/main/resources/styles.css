@@ -26,7 +26,7 @@
 }
 
 .cell:hover {
-	-fx-background-color: lightskyblue;	
+	-fx-background-color: orange;	
 }
 
 .scroll-pane {
@@ -53,6 +53,10 @@
 
 .text-area {
 	-fx-font: 14pt Tahoma;	
+}
+
+.text-field {
+	-fx-background-color: #dcdcdc;
 }
 
 .tree-cell {
