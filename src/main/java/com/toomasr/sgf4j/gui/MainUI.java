@@ -291,7 +291,10 @@ public class MainUI {
         if (Util.sgfEscapeText(newValue).equals(currentMove.getProperty("C"))) {
           return;
         }
-        currentMove.addProperty("C", Util.sgfEscapeText(newValue));
+        if (Util.sgfEscapeText(newValue).equals(currentMove.getUpdatedProperty("C"))) {
+          return;
+        }
+        currentMove.addUpdatedProperty("C", Util.sgfEscapeText(newValue));
       }
     });
 
