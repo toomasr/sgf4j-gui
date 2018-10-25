@@ -23,6 +23,7 @@ import com.toomasr.sgf4j.board.GuiBoardListener;
 import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.board.VirtualBoard;
 import com.toomasr.sgf4j.filetree.FileTreeView;
+import com.toomasr.sgf4j.metasystem.ProblemStatus;
 import com.toomasr.sgf4j.movetree.GameStartNoopStone;
 import com.toomasr.sgf4j.movetree.GlueStone;
 import com.toomasr.sgf4j.movetree.GlueStoneType;
@@ -51,6 +52,7 @@ import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
@@ -71,7 +73,7 @@ public class MainUI {
   private Button nextButton;
   private GameNode currentMove = null;
   private GameNode prevMove = null;
-  private Game game;
+  private MyGame game;
   private VirtualBoard virtualBoard;
   private BoardSquare[][] board;
   private GridPane movePane;
@@ -103,6 +105,20 @@ public class MainUI {
   private String activeGameEncoding;
 
   private VBox rootVbox;
+
+  private Label lastSolved;
+
+  private Label lastOpened;
+
+  private Button[] problemStatusButtons;
+
+  private Label folderInfoLastOpened;
+
+  private Label folderInfoNumberOfProblems;
+
+  private Label folderInfoNumberOfFailed;
+
+  private Label folderInfoNumberOfSolved;
 
   public MainUI(SGF4JApp app) {
     this.app = app;
@@ -163,9 +179,10 @@ public class MainUI {
     HBox.setHgrow(buttonPane, Priority.ALWAYS);
 
     // constructing the right box
-    VBox gameMetaInfo = generateGameMetaInfo();
+    VBox gameMetaInfo = generateGameMetaInfoPane();
     TextArea commentArea = generateCommentPane();
-    rightVBox.getChildren().addAll(gameMetaInfo, commentArea);
+    TitledPane tPane = new TitledPane("Comment Area", commentArea);
+    rightVBox.getChildren().addAll(gameMetaInfo, tPane);
     rightVBox.setMaxWidth(450);
     VBox.setVgrow(commentArea, Priority.ALWAYS);
 
@@ -202,7 +219,7 @@ public class MainUI {
 
     MenuItem saveGame = new MenuItem("Save");
     saveGame.setOnAction(e -> {
-      if (saveSgf(this.game, this.activeGameSgf, this.activeGameEncoding)) {
+      if (saveSgf(this.game.getGame(), this.activeGameSgf, this.activeGameEncoding)) {
         updateStatus("Saved game to " + this.activeGameSgf.getFileName());
       }
       else {
@@ -251,19 +268,19 @@ public class MainUI {
     }
   }
 
-  private VBox generateGameMetaInfo() {
+  private VBox generateGameMetaInfoPane() {
     VBox vbox = new VBox();
 
     vbox.setMinWidth(250);
     GridPane pane = new GridPane();
 
-    Label blackPlayerLabel = new Label("Black:");
+    Label blackPlayerLabel = new Label("Black: ");
     GridPane.setConstraints(blackPlayerLabel, 1, 0);
 
     blackPlayerName = new Label("Unknown");
     GridPane.setConstraints(blackPlayerName, 2, 0);
 
-    Label whitePlayerLabel = new Label("White:");
+    Label whitePlayerLabel = new Label("White: ");
     GridPane.setConstraints(whitePlayerLabel, 1, 1);
 
     whitePlayerName = new Label("Unknown");
@@ -271,7 +288,78 @@ public class MainUI {
 
     pane.getChildren().addAll(blackPlayerLabel, blackPlayerName, whitePlayerLabel, whitePlayerName);
 
-    vbox.getChildren().add(pane);
+    TitledPane tPane = new TitledPane("Game Info", pane);
+    vbox.getChildren().add(tPane);
+
+
+    pane = new GridPane();
+    label = new Label("Last opened: ");
+    pane.add(label, 0, 0);
+
+    folderInfoLastOpened = new Label();
+    pane.add(folderInfoLastOpened, 1, 0);
+
+    label = new Label("# of problems: ");
+    pane.add(label, 0, 1);
+
+    folderInfoNumberOfProblems = new Label();
+    pane.add(folderInfoNumberOfProblems, 1, 1);
+
+    label = new Label("# of solved: ");
+    pane.add(label, 0, 2);
+
+    folderInfoNumberOfSolved = new Label();
+    pane.add(folderInfoNumberOfSolved, 1, 2);
+
+    label = new Label("# of failed: ");
+    pane.add(label, 0, 3);
+
+    folderInfoNumberOfFailed = new Label();
+    pane.add(folderInfoNumberOfFailed, 1, 3);
+
+    tPane = new TitledPane("Folder information", pane);
+    vbox.getChildren().add(tPane);
+
+
+    ///////////////////////////////////////////////
+    pane = new GridPane();
+    label = new Label("Last opened: ");
+    GridPane.setConstraints(label, 1, 2);
+
+    lastOpened = new Label("Never");
+    GridPane.setConstraints(lastOpened, 2, 2);
+
+    pane.getChildren().addAll(label, lastOpened);
+    ///////////////////////////////////////////////
+    Label label = new Label("Last solved: ");
+    GridPane.setConstraints(label, 1, 3);
+
+    lastSolved = new Label("Never");
+    GridPane.setConstraints(lastSolved, 2, 3);
+
+    pane.getChildren().addAll(label, lastSolved);
+
+    HBox hbox = new HBox();
+
+    problemStatusButtons = new Button[] { new Button("None"), new Button("Easy"), new Button("Medium"), new Button("Difficult"), new Button("Fail"), };
+    for (int i = 0; i < problemStatusButtons.length; i++) {
+      Button btn = problemStatusButtons[i];
+      hbox.getChildren().add(btn);
+      btn.setOnAction(e -> {
+        MainUI.this.game.updateFileStatus(btn.getText());
+        resetProblemStatusButtonStyles();
+        btn.getStyleClass().add("btn-selected");
+        updateMetaInfoForGame(game);
+      });
+    }
+
+    GridPane.setConstraints(hbox, 1, 4);
+    GridPane.setColumnSpan(hbox, 2);
+    pane.getChildren().addAll(hbox);
+
+    tPane = new TitledPane("Problem Information", pane);
+    vbox.getChildren().add(tPane);
+
     return vbox;
   }
 
@@ -310,7 +398,7 @@ public class MainUI {
 
     this.activeGameSgf = pathToSgf;
     this.activeGameEncoding = encoding;
-    this.game = Sgf.createFromPath(pathToSgf, encoding);
+    this.game = new MyGame(Sgf.createFromPath(pathToSgf, encoding), pathToSgf);
 
     currentMove = this.game.getRootNode();
     prevMove = null;
@@ -340,7 +428,9 @@ public class MainUI {
     showMarkersForMove(rootNode);
     showCommentForMove(rootNode);
 
-    showMetaInfoForGame(this.game);
+    updateMetaInfoForGame(this.game);
+    // only now update the file opened, not to mess up the meta information
+    this.game.updateFileOpened();
 
     treePaneScrollPane.setHvalue(0);
     treePaneScrollPane.setVvalue(0);
@@ -348,7 +438,7 @@ public class MainUI {
     moveNoField.setText("0");
   }
 
-  private void showMetaInfoForGame(Game game) {
+  private void updateMetaInfoForGame(MyGame game) {
     String whiteRating = game.getProperty(SgfProperties.WHITE_PLAYER_RATING);
     String whiteLabel = game.getProperty(SgfProperties.WHITE_PLAYER_NAME);
     if (whiteRating != null) {
@@ -362,6 +452,26 @@ public class MainUI {
       blackLabel = blackLabel + " [" + blackRating + "]";
     }
     blackPlayerName.setText(blackLabel);
+
+    this.folderInfoLastOpened.setText(game.getFolderInfoLastOpened());
+    this.folderInfoNumberOfProblems.setText(game.getFolderInfoNumberOfProblems()+" SGF files");
+    this.folderInfoNumberOfSolved.setText(game.getFolderInfoNumberOfSolved()+"");
+    this.folderInfoNumberOfFailed.setText(game.getFolderInfoNumberOfFailed()+"");
+
+    String lastOpened = game.getLastOpenedPretty();
+    this.lastOpened.setText(lastOpened);
+    String lastSolved = game.getLastSolvedPretty();
+    this.lastSolved.setText(lastSolved);
+    ProblemStatus problemStatus = game.getStatus();
+
+    resetProblemStatusButtonStyles();
+    problemStatusButtons[problemStatus.ordinal()].getStyleClass().add("btn-selected");
+  }
+
+  private void resetProblemStatusButtonStyles() {
+    for (int i = 0; i < problemStatusButtons.length; i++) {
+      problemStatusButtons[i].getStyleClass().removeAll("btn-selected");
+    }
   }
 
   public void initNewBoard() {
@@ -369,7 +479,7 @@ public class MainUI {
     placePreGameStones(game);
   }
 
-  private void placePreGameStones(Game game) {
+  private void placePreGameStones(MyGame game) {
     String blackStones = game.getProperty("AB", "");
     String whiteStones = game.getProperty("AW", "");
 
@@ -705,7 +815,7 @@ public class MainUI {
     deHighLightStoneInTree();
     highLightStoneInTree(prevMove);
 
-    String moveNo = prevMove.getMoveNo()+"";
+    String moveNo = prevMove.getMoveNo() + "";
     if (prevMove.getMoveNo() < 0)
       moveNo = "0";
     moveNoField.setText(moveNo);

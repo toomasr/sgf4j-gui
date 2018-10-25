@@ -66,3 +66,11 @@
 .bordered {
 	-fx-border-width: 1.0;
 }
+
+.button {
+    -fx-background-color: transparent;
+}
+
+.btn-selected {
+	-fx-background-color: lightskyblue;
+}
