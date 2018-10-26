@@ -272,4 +272,11 @@ public class MetaSystem {
 
     return rtrn;
   }
+
+  public static boolean systemExists(Path path) {
+    if (path.toFile().isFile()) {
+      path = path.getParent();
+    }
+    return path.resolve(META_SYSTEM_FILE).toFile().exists();
+  }
 }
