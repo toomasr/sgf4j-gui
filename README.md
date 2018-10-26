@@ -7,7 +7,7 @@ As a side result of the viewer I have also implemented a [SGF Parser](https://gi
 
 The app is meant for me to go over a large number of SGF problems in a quick manner. I wasn't able to find a tool out there that would let you load SGFs without navigating some File explorer or similar.
 
-![Screenshot](https://raw.githubusercontent.com/toomasr/sgf4j-gui/master/src/main/resources/screenshot-001.png)
+![Screenshot](https://raw.githubusercontent.com/toomasr/sgf4j-gui/master/src/main/resources/screenshot-002.png)
 
 Running It
 ==========
