@@ -38,6 +38,7 @@ import com.toomasr.sgf4j.util.TextUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -54,7 +55,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.TreeItem.TreeModificationEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -119,6 +120,7 @@ public class MainUI {
   private Label folderInfoNumberOfFailed;
 
   private Label folderInfoNumberOfSolved;
+private FileTreeView fileTreeView;
 
   public MainUI(SGF4JApp app) {
     this.app = app;
@@ -350,6 +352,10 @@ public class MainUI {
         resetProblemStatusButtonStyles();
         btn.getStyleClass().add("btn-selected");
         updateMetaInfoForGame(game);
+
+        // trigger the event to update the icon
+        TreeItem<File> selectedItem = fileTreeView.getSelectionModel().getSelectedItem();
+        Event.fireEvent(selectedItem, new TreeModificationEvent<File>(TreeItem.<File>valueChangedEvent(), selectedItem, selectedItem.getValue()));
       });
     }
 
@@ -669,19 +675,19 @@ public class MainUI {
     VBox vbox = new VBox();
     vbox.setMinWidth(250);
 
-    TreeView<File> treeView = new FileTreeView();
-    treeView.setFocusTraversable(false);
+    fileTreeView = new FileTreeView();
+    fileTreeView.setFocusTraversable(false);
 
     Label label = new Label("Choose SGF File");
-    vbox.getChildren().addAll(label, treeView);
-    VBox.setVgrow(treeView, Priority.ALWAYS);
+    vbox.getChildren().addAll(label, fileTreeView);
+    VBox.setVgrow(fileTreeView, Priority.ALWAYS);
 
-    treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    fileTreeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
       @Override
       public void handle(MouseEvent event) {
         if (event.getClickCount() == 2) {
-          TreeItem<File> item = treeView.getSelectionModel().getSelectedItem();
+          TreeItem<File> item = fileTreeView.getSelectionModel().getSelectedItem();
           File file = item.getValue().toPath().toFile();
           if (file.isFile()) {
             initializeGame(item.getValue().toPath());
