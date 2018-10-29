@@ -49,11 +49,10 @@
 
 .text-area .content {
   -fx-background-color: main-background;
-  -fx-font-family: Poly;
 }
 
 .text-area {
-	-fx-font: 14pt Tahoma;	
+	-fx-font: 14pt Poly-Regular;	
 }
 
 .text-field {
