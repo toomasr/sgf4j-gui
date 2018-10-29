@@ -91,7 +91,6 @@ public class MainUI {
   private ScrollPane treePaneScrollPane;
   private Label whitePlayerName;
   private Label blackPlayerName;
-  private Label label;
 
   private TilePane buttonPane;
 
@@ -120,7 +119,9 @@ public class MainUI {
   private Label folderInfoNumberOfFailed;
 
   private Label folderInfoNumberOfSolved;
-private FileTreeView fileTreeView;
+  private FileTreeView fileTreeView;
+
+  private Label statusBarLabel;
 
   public MainUI(SGF4JApp app) {
     this.app = app;
@@ -249,8 +250,8 @@ private FileTreeView fileTreeView;
   private HBox generateStatusBar() {
     HBox rtrn = new HBox();
 
-    label = new Label("MainUI loaded");
-    rtrn.getChildren().add(label);
+    statusBarLabel = new Label("MainUI loaded");
+    rtrn.getChildren().add(statusBarLabel);
 
     rtrn.setMinHeight(20);
 
@@ -258,7 +259,7 @@ private FileTreeView fileTreeView;
   }
 
   public void updateStatus(String update) {
-    this.label.setText(update);
+    this.statusBarLabel.setText(update);
   }
 
   public void initGame() {
@@ -295,7 +296,7 @@ private FileTreeView fileTreeView;
 
 
     pane = new GridPane();
-    label = new Label("Last opened: ");
+    Label label = new Label("Last opened: ");
     pane.add(label, 0, 0);
 
     folderInfoLastOpened = new Label();
@@ -333,7 +334,7 @@ private FileTreeView fileTreeView;
 
     pane.getChildren().addAll(label, lastOpened);
     ///////////////////////////////////////////////
-    Label label = new Label("Last solved: ");
+    label = new Label("Last solved: ");
     GridPane.setConstraints(label, 1, 3);
 
     lastSolved = new Label("Never");
