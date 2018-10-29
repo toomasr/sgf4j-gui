@@ -48,7 +48,8 @@
 }
 
 .text-area .content {
-  -fx-background-color: main-background;  
+  -fx-background-color: main-background;
+  -fx-font-family: Poly;
 }
 
 .text-area {

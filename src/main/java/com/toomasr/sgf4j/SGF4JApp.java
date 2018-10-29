@@ -18,6 +18,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class SGF4JApp extends Application {
@@ -136,5 +137,11 @@ public class SGF4JApp extends Application {
     mainUIBuilder.initGame();
     this.scene.setRoot(mainUI);
 
+  }
+
+  @Override
+  public void init() throws Exception {
+    super.init();
+    Font.loadFont(SGF4JApp.class.getResource("/fonts/Poly-Regular.otf").toExternalForm(), 10);
   }
 }
