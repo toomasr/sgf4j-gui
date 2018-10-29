@@ -795,6 +795,8 @@ private FileTreeView fileTreeView;
     nextButton.requestFocus();
 
     String moveNo = move.getMoveNo() + "";
+    if (move.getMoveNo() < 0)
+      moveNo = "0";
     moveNoField.setText(moveNo);
 
     // show the associated comment
