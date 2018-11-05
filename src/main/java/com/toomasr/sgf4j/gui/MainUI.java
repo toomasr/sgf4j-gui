@@ -41,6 +41,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -67,6 +68,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 public class MainUI {
   private static final Logger logger = LoggerFactory.getLogger(MainUI.class);
@@ -319,7 +322,41 @@ public class MainUI {
 
     folderInfoNumberOfFailed = new Label();
     pane.add(folderInfoNumberOfFailed, 1, 3);
+    
+    label = new Label("Sort Order");
+    label.getStyleClass().add("title-label");
 
+    GridPane.setHalignment(label, HPos.CENTER);
+    GridPane.setColumnSpan(label, 2);
+    //pane.add(label, 1, 4);
+
+    HBox hbox = new HBox();
+    Button[] sortButtons = new Button[] { new Button("Name"), new Button("Difficulty")};
+    for (int i = 0; i < sortButtons.length; i++) {
+      Button btn = sortButtons[i];
+      if (i == 0) {
+      	btn.getStyleClass().add("btn-selected");
+      }
+      hbox.getChildren().add(btn);
+      btn.setOnAction(e -> {
+        //MainUI.this.game.updateFileStatus(btn.getText());
+        //resetProblemStatusButtonStyles();
+      	for (int j = 0; j < sortButtons.length; j++) {
+					sortButtons[j].getStyleClass().remove("btn-selected");
+				}
+        btn.getStyleClass().add("btn-selected");
+        //updateMetaInfoForGame(game);
+
+        // trigger the event to update the icon
+        //TreeItem<File> selectedItem = fileTreeView.getSelectionModel().getSelectedItem();
+        //Event.fireEvent(selectedItem, new TreeModificationEvent<File>(TreeItem.<File>valueChangedEvent(), selectedItem, selectedItem.getValue()));
+      });
+    }
+
+    GridPane.setColumnSpan(hbox, 2);
+    GridPane.setHalignment(hbox, HPos.CENTER);
+    //pane.add(hbox, 0, 5);
+    
     tPane = new TitledPane("Folder information", pane);
     vbox.getChildren().add(tPane);
 
@@ -341,8 +378,16 @@ public class MainUI {
     GridPane.setConstraints(lastSolved, 2, 3);
 
     pane.getChildren().addAll(label, lastSolved);
+    
+    label = new Label("Difficulty");
+    label.getStyleClass().add("title-label");
 
-    HBox hbox = new HBox();
+    GridPane.setHalignment(label, HPos.CENTER);
+    GridPane.setColumnSpan(label, 2);
+    GridPane.setConstraints(label, 1, 4);
+    pane.getChildren().addAll(label);
+
+    hbox = new HBox();
 
     problemStatusButtons = new Button[] { new Button("None"), new Button("Easy"), new Button("Medium"), new Button("Difficult"), new Button("Fail"), };
     for (int i = 0; i < problemStatusButtons.length; i++) {
@@ -360,7 +405,7 @@ public class MainUI {
       });
     }
 
-    GridPane.setConstraints(hbox, 1, 4);
+    GridPane.setConstraints(hbox, 1, 5);
     GridPane.setColumnSpan(hbox, 2);
     pane.getChildren().addAll(hbox);
 

@@ -11,6 +11,8 @@
     tree-stone-active: maroon;
     scroll-bar-color: derive(black, 70%);
     -fx-background: main-background;
+    -fx-font-size: 10pt;
+    -fx-font-family: "Open Sans";
 }
 
 .virtual-flow {
@@ -52,7 +54,7 @@
 }
 
 .text-area {
-	-fx-font: 14pt Poly-Regular;	
+	-fx-font: 14pt "Open Sans";	
 }
 
 .text-field {
@@ -73,4 +75,8 @@
 
 .btn-selected {
 	-fx-background-color: lightskyblue;
+}
+
+.title-label {
+  -fx-font-weight: bold;
 }

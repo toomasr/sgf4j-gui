@@ -142,6 +142,12 @@ public class SGF4JApp extends Application {
   @Override
   public void init() throws Exception {
     super.init();
+    System.out.println(Font.getDefault());
     Font.loadFont(SGF4JApp.class.getResource("/fonts/Poly-Regular.otf").toExternalForm(), 10);
+    Font.loadFont(SGF4JApp.class.getResource("/fonts/arvo/Arvo-Regular.ttf").toExternalForm(), 10);
+    Font font = Font.loadFont(SGF4JApp.class.getResource("/fonts/open-sans/OpenSans-Regular.ttf").toExternalForm(), 10);
+    System.out.println(font);
+    font = Font.loadFont(SGF4JApp.class.getResource("/fonts/open-sans/OpenSans-Bold.ttf").toExternalForm(), 10);
+    System.out.println(font);
   }
 }
