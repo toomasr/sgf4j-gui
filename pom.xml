@@ -1,31 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>Simple SGF Viewer</name>
   <groupId>com.toomasr</groupId>
   <artifactId>sgf4j-gui</artifactId>
-  <version>0.0.4-SNAPSHOT</version>
+  <version>0.0.5-SNAPSHOT</version>
 
   <scm>
     <connection>scm:git:git@github.com:toomasr/sgf4j-gui.git</connection>
     <url>scm:git:git@github.com:toomasr/sgf4j-gui.git</url>
     <developerConnection>scm:git:git@github.com:toomasr/sgf4j-gui.git</developerConnection>
+    <tag>sgf4j-gui-0.0.4</tag>
   </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>sonatype-nexus-staging</id>
-      <name>Sonatype OSS Staging</name>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-      <layout>default</layout>
-    </repository>
-    <snapshotRepository>
-      <id>sonatype-nexus-snapshots</id>
-      <name>Sonatype OSS Snapshots</name>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-      <layout>default</layout>
-    </snapshotRepository>
-  </distributionManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,7 +21,7 @@
     <dependency>
       <groupId>com.toomasr</groupId>
       <artifactId>sgf4j-parser</artifactId>
-      <version>0.0.5-SNAPSHOT</version>
+      <version>0.0.5</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -102,6 +87,14 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <goals>install</goals>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
