@@ -11,7 +11,7 @@ import javafx.scene.image.ImageView;
 
 public class FileFormatCell extends TreeCell<File> {
   private Image noneImage = new Image(getClass().getResourceAsStream("/icons/none_16x16.png"));
-  private Image failedImage = new Image(getClass().getResourceAsStream("/icons/failed_16x16.png"));
+  private Image failedImage = new Image(getClass().getResourceAsStream("/icons/failed-red_16x16.png"));
   private Image solvedImage = new Image(getClass().getResourceAsStream("/icons/solved_16x16.png"));
 
   public FileFormatCell() {
