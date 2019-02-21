@@ -800,7 +800,10 @@ public class MainUI {
     }
     else {
     	GameNode node = ParserUtils.findCorrespondingBelowMove(currentMove);
-    	fastForwardTo(node);
+    	logger.debug("Trying to ff to "+node);
+    	if (node != null) {
+    		fastForwardTo(node);
+    	}
     }
   }
 
