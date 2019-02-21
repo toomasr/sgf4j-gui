@@ -33,6 +33,7 @@ import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.Util;
 import com.toomasr.sgf4j.properties.AppState;
+import com.toomasr.sgf4j.util.ParserUtils;
 import com.toomasr.sgf4j.util.TextUtils;
 
 import javafx.beans.value.ChangeListener;
@@ -68,8 +69,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 
 public class MainUI {
   private static final Logger logger = LoggerFactory.getLogger(MainUI.class);
@@ -799,6 +798,10 @@ public class MainUI {
       // scroll the move tree to make the highlighted move visible
       ensureVisibleForActiveTreeNode(currentMove);
     }
+    else {
+    	GameNode node = ParserUtils.findCorrespondingBelowMove(currentMove);
+    	fastForwardTo(node);
+    }
   }
 
   public void handlePreviousPressed() {
@@ -808,6 +811,16 @@ public class MainUI {
 
       virtualBoard.undoMove(prevMove, currentMove);
     }
+  }
+  
+  private void handleUpPressed() {
+  	// we are on the top line already, nowhere to go
+  	if (currentMove.getVisualDepth() < 1) {
+  		return;
+  	}
+  	
+  	GameNode node = ParserUtils.findCorrespondingTopMove(currentMove);
+  	fastForwardTo(node);
   }
 
   public void playMove(GameNode move, GameNode prevMove) {
@@ -1091,6 +1104,9 @@ public class MainUI {
           }
           else if (event.getCode().equals(KeyCode.DOWN)) {
             handleNextBranch();
+          }
+          else if (event.getCode().equals(KeyCode.UP)) {
+            handleUpPressed();
           }
         }
       }
