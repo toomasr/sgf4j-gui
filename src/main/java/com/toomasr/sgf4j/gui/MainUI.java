@@ -321,7 +321,7 @@ public class MainUI {
 
     folderInfoNumberOfFailed = new Label();
     pane.add(folderInfoNumberOfFailed, 1, 3);
-    
+
     label = new Label("Sort Order");
     label.getStyleClass().add("title-label");
 
@@ -355,7 +355,7 @@ public class MainUI {
     GridPane.setColumnSpan(hbox, 2);
     GridPane.setHalignment(hbox, HPos.CENTER);
     //pane.add(hbox, 0, 5);
-    
+
     tPane = new TitledPane("Folder information", pane);
     vbox.getChildren().add(tPane);
 
@@ -377,7 +377,7 @@ public class MainUI {
     GridPane.setConstraints(lastSolved, 2, 3);
 
     pane.getChildren().addAll(label, lastSolved);
-    
+
     label = new Label("Difficulty");
     label.getStyleClass().add("title-label");
 
@@ -800,7 +800,6 @@ public class MainUI {
     }
     else {
     	GameNode node = ParserUtils.findCorrespondingBelowMove(currentMove);
-    	logger.debug("Trying to ff to "+node);
     	if (node != null) {
     		fastForwardTo(node);
     	}
@@ -815,15 +814,18 @@ public class MainUI {
       virtualBoard.undoMove(prevMove, currentMove);
     }
   }
-  
+
   private void handleUpPressed() {
   	// we are on the top line already, nowhere to go
   	if (currentMove.getVisualDepth() < 1) {
   		return;
   	}
-  	
+
   	GameNode node = ParserUtils.findCorrespondingTopMove(currentMove);
-  	fastForwardTo(node);
+  	// only ff if such a move exists
+  	if (node != null) {
+  	  fastForwardTo(node);
+  	}
   }
 
   public void playMove(GameNode move, GameNode prevMove) {
