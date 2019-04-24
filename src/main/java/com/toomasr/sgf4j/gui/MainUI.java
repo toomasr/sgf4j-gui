@@ -856,7 +856,6 @@ public class MainUI {
 
     // handle the prev and new markers
     showMarkersForMove(move);
-    nextButton.requestFocus();
 
     String moveNo = move.getMoveNo() + "";
     if (move.getMoveNo() < 0)
@@ -893,8 +892,6 @@ public class MainUI {
     moveNoField.setText(moveNo);
 
     ensureVisibleForActiveTreeNode(prevMove);
-    // rather have previous move button have focus
-    previousButton.requestFocus();
   }
 
   private void ensureVisibleForActiveTreeNode(GameNode move) {
