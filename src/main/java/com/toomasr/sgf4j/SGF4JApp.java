@@ -1,6 +1,13 @@
 package com.toomasr.sgf4j;
 
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +40,9 @@ public class SGF4JApp extends Application {
     AppState.getInstance().loadState();
 
     SvgImageLoaderFactory.install(new PrimitiveDimensionProvider());
-    primaryStage.setTitle("SGF4J");
+    String verInfo = extractVersionFromManifest();
+    primaryStage.setTitle("SGF4J - "+verInfo);
+    System.out.println("Build information: "+verInfo);
     primaryStage.setMinWidth(1125);
     primaryStage.setMinHeight(800);
     primaryStage.getIcons().add(new Image(SGF4JApp.class.getResourceAsStream("/icon.png")));
@@ -136,7 +145,6 @@ public class SGF4JApp extends Application {
     }
     mainUIBuilder.initGame();
     this.scene.setRoot(mainUI);
-
   }
 
   @Override
@@ -144,5 +152,45 @@ public class SGF4JApp extends Application {
     super.init();
     Font.loadFont(SGF4JApp.class.getResource("/fonts/open-sans/OpenSans-Regular.ttf").toExternalForm(), 10);
     Font.loadFont(SGF4JApp.class.getResource("/fonts/open-sans/OpenSans-Bold.ttf").toExternalForm(), 10);
+  }
+  
+  private String extractVersionFromManifest() {
+  	String rtrn = "";
+  	try {
+			Enumeration<URL> resources = getClass().getClassLoader()
+				  .getResources("META-INF/MANIFEST.MF");
+				while (resources.hasMoreElements()) {
+				    try {
+				      Manifest manifest = new Manifest(resources.nextElement().openStream());
+				      // check that this is your manifest and do what you need or get the next one
+				      Map<String,Attributes> entries = manifest.getEntries();
+				      final String key = "SGF4J Build Information";
+				      if (entries.size()>0 && key.equals(entries.keySet().iterator().next())) {
+				      	String implVersion = entries.get(key).getValue("Implementation-Version");
+				      	String implRevision = entries.get(key).getValue("Implementation-SCM-Revision");
+				      	String implBranch = entries.get(key).getValue("Implementation-SCM-Branch");
+				      	String implBuildtime = entries.get(key).getValue("Build-Time");
+				      	if (!"null".equals(implVersion)) {
+				      		rtrn+=implVersion+"; ";
+				      	}
+				      	if (!"null".equals(implRevision)) {
+				      		rtrn+=implRevision+"; ";
+				      	}
+				      	if (!"null".equals(implBranch)) {
+				      		rtrn+=implBranch+"; ";
+				      	}
+				      	if (!"null".equals(implBuildtime)) {
+				      		rtrn+=implBuildtime+"; ";
+				      	}
+				      }
+				      
+				    } catch (IOException e) {
+				      e.printStackTrace();
+				    }
+				}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+  	return rtrn;
   }
 }
