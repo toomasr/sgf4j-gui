@@ -1,6 +1,5 @@
 package com.toomasr.sgf4j;
 
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -41,8 +40,8 @@ public class SGF4JApp extends Application {
 
     SvgImageLoaderFactory.install(new PrimitiveDimensionProvider());
     String verInfo = extractVersionFromManifest();
-    primaryStage.setTitle("SGF4J - "+verInfo);
-    System.out.println("Build information: "+verInfo);
+    primaryStage.setTitle("SGF4J - " + verInfo);
+    System.out.println("Build information: " + verInfo);
     primaryStage.setMinWidth(1125);
     primaryStage.setMinHeight(800);
     primaryStage.getIcons().add(new Image(SGF4JApp.class.getResourceAsStream("/icon.png")));
@@ -103,8 +102,7 @@ public class SGF4JApp extends Application {
         Dragboard db = event.getDragboard();
         if (db.hasFiles()) {
           event.acceptTransferModes(TransferMode.COPY);
-        }
-        else {
+        } else {
           event.consume();
         }
       }
@@ -139,8 +137,7 @@ public class SGF4JApp extends Application {
     Pane mainUI;
     try {
       mainUI = mainUIBuilder.buildUI();
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
     mainUIBuilder.initGame();
@@ -153,44 +150,43 @@ public class SGF4JApp extends Application {
     Font.loadFont(SGF4JApp.class.getResource("/fonts/open-sans/OpenSans-Regular.ttf").toExternalForm(), 10);
     Font.loadFont(SGF4JApp.class.getResource("/fonts/open-sans/OpenSans-Bold.ttf").toExternalForm(), 10);
   }
-  
+
   private String extractVersionFromManifest() {
-  	String rtrn = "";
-  	try {
-			Enumeration<URL> resources = getClass().getClassLoader()
-				  .getResources("META-INF/MANIFEST.MF");
-				while (resources.hasMoreElements()) {
-				    try {
-				      Manifest manifest = new Manifest(resources.nextElement().openStream());
-				      // check that this is your manifest and do what you need or get the next one
-				      Map<String,Attributes> entries = manifest.getEntries();
-				      final String key = "SGF4J Build Information";
-				      if (entries.size()>0 && key.equals(entries.keySet().iterator().next())) {
-				      	String implVersion = entries.get(key).getValue("Implementation-Version");
-				      	String implRevision = entries.get(key).getValue("Implementation-SCM-Revision");
-				      	String implBranch = entries.get(key).getValue("Implementation-SCM-Branch");
-				      	String implBuildtime = entries.get(key).getValue("Build-Time");
-				      	if (!"null".equals(implVersion)) {
-				      		rtrn+=implVersion+"; ";
-				      	}
-				      	if (!"null".equals(implRevision)) {
-				      		rtrn+=implRevision+"; ";
-				      	}
-				      	if (!"null".equals(implBranch)) {
-				      		rtrn+=implBranch+"; ";
-				      	}
-				      	if (!"null".equals(implBuildtime)) {
-				      		rtrn+=implBuildtime+"; ";
-				      	}
-				      }
-				      
-				    } catch (IOException e) {
-				      e.printStackTrace();
-				    }
-				}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-  	return rtrn;
+    String rtrn = "";
+    try {
+      Enumeration<URL> resources = getClass().getClassLoader().getResources("META-INF/MANIFEST.MF");
+      while (resources.hasMoreElements()) {
+        try {
+          Manifest manifest = new Manifest(resources.nextElement().openStream());
+          // check that this is your manifest and do what you need or get the next one
+          Map<String, Attributes> entries = manifest.getEntries();
+          final String key = "SGF4J Build Information";
+          if (entries.size() > 0 && key.equals(entries.keySet().iterator().next())) {
+            String implVersion = entries.get(key).getValue("Implementation-Version");
+            String implRevision = entries.get(key).getValue("Implementation-SCM-Revision");
+            String implBranch = entries.get(key).getValue("Implementation-SCM-Branch");
+            String implBuildtime = entries.get(key).getValue("Build-Time");
+            if (!"null".equals(implVersion)) {
+              rtrn += implVersion + "; ";
+            }
+            if (!"null".equals(implRevision)) {
+              rtrn += implRevision + "; ";
+            }
+            if (!"null".equals(implBranch)) {
+              rtrn += implBranch + "; ";
+            }
+            if (!"null".equals(implBuildtime)) {
+              rtrn += implBuildtime + "; ";
+            }
+          }
+
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return rtrn;
   }
 }
