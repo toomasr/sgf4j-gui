@@ -63,6 +63,29 @@
       <artifactId>javafxsvg</artifactId>
       <version>1.3.0</version>
     </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-controls</artifactId>
+        <version>11</version>
+    </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-graphics </artifactId>
+        <version>11</version>
+        <classifier>win</classifier>
+    </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-graphics </artifactId>
+        <version>11</version>
+        <classifier>linux</classifier>
+    </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-graphics </artifactId>
+        <version>11</version>
+        <classifier>mac</classifier>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -121,7 +144,7 @@
           <archive>
             <index>true</index>
             <manifestEntries>
-              <Main-Class>com.toomasr.sgf4j.SGF4JApp</Main-Class>
+              <Main-Class>com.toomasr.sgf4j.PseudoMain</Main-Class>
             </manifestEntries>
             <manifestSections>
                         <manifestSection>
