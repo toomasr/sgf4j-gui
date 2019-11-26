@@ -495,12 +495,18 @@ public class MainUI {
     if (whiteRating != null) {
       whiteLabel = whiteLabel + " [" + whiteRating + "]";
     }
+    if (game.getGame().getTimingInfoFound()) {
+      whiteLabel+=" (median per move "+game.getGame().getWTimings().median+"s)";
+    }
     whitePlayerName.setText(whiteLabel);
 
     String blackRating = game.getProperty(SgfProperties.BLACK_PLAYER_RATING);
     String blackLabel = game.getProperty(SgfProperties.BLACK_PLAYER_NAME);
     if (blackRating != null) {
       blackLabel = blackLabel + " [" + blackRating + "]";
+    }
+    if (game.getGame().getTimingInfoFound()) {
+      blackLabel+=" (median per move "+game.getGame().getBTimings().median+"s)";
     }
     blackPlayerName.setText(blackLabel);
 
