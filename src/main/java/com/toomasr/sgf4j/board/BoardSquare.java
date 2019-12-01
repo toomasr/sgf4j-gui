@@ -97,6 +97,18 @@ public class BoardSquare extends StackPane {
       getChildren().add(starPoint);
     }
   }
+  
+  public StoneState getState() {
+    return this.squareState;
+  }
+  
+  public int getX() {
+    return this.x;
+  }
+  
+  public int getY() {
+    return this.y;
+  }
 
   public void removeStone() {
     squareState = StoneState.EMPTY;
