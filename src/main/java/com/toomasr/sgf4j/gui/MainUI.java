@@ -70,7 +70,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-public class MainUI {
+public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
   private static final Logger logger = LoggerFactory.getLogger(MainUI.class);
 
   private Button nextButton;
@@ -451,7 +451,7 @@ public class MainUI {
     this.activeGameEncoding = encoding;
     this.game = new MyGame(Sgf.createFromPath(pathToSgf, encoding), pathToSgf);
 
-    currentMove = this.game.getRootNode();
+    currentMove = game.getRootNode();
     prevMove = null;
 
     // reset our virtual board and actual board
@@ -459,25 +459,10 @@ public class MainUI {
     virtualBoard.addBoardListener(new GuiBoardListener(this));
 
     initNewBoard();
+    reinitMoveTreePane();
 
-    // construct the tree of the moves
-    nodeToTreeStone.clear();
-    // I used to just getChildren().clear() but it produces problems
-    // See https://stackoverflow.com/questions/36862282/javafx-8-duplicate-children-after-getchildren-clear
-    // So instead I'm generating a fresh pane
-    movePane = generateMoveTreePane();
-    treePaneScrollPane.setContent(movePane);
-
-    GameStartNoopStone rootStone = new GameStartNoopStone(currentMove);
-    movePane.add(rootStone, 0, 0);
-    configureMoveTreeElement(currentMove, rootStone);
-    highLightStoneInTree(currentMove);
-
-    GameNode rootNode = game.getRootNode();
-    populateMoveTreePane(rootNode, 0);
-
-    showMarkersForMove(rootNode);
-    showCommentForMove(rootNode);
+    showMarkersForMove(game.getRootNode());
+    showCommentForMove(game.getRootNode());
 
     updateMetaInfoForGame(this.game);
     // only now update the file opened, not to mess up the meta information
@@ -605,6 +590,22 @@ public class MainUI {
     }
 
   }
+  
+  private void reinitMoveTreePane() {
+    // I used to just getChildren().clear() but it produces problems
+    // See https://stackoverflow.com/questions/36862282/javafx-8-duplicate-children-after-getchildren-clear
+    // So instead I'm generating a fresh pane
+    movePane = generateMoveTreePane();
+    treePaneScrollPane.setContent(movePane);
+
+    GameStartNoopStone rootStone = new GameStartNoopStone(game.getRootNode());
+    movePane.add(rootStone, 0, 0);
+    
+    nodeToTreeStone.clear();
+    configureMoveTreeElement(game.getRootNode(), rootStone);
+    
+    populateMoveTreePane(game.getRootNode(), 0);
+  }
 
   private void populateMoveTreePane(GameNode node, int depth) {
     // we draw out only actual moves
@@ -718,7 +719,6 @@ public class MainUI {
     }
     else {
       virtualBoard.fastForwardTo(move);
-      highLightStoneInTree(move);
     }
   }
 
@@ -938,7 +938,7 @@ public class MainUI {
       highlightedTreeStone.add(stone);
     }
     else {
-      System.out.println("Cannot find stone for " + move.hashCode());
+      System.out.println("Not highlighting stone, can't find " + move.hashCode());
     }
   }
 
@@ -1043,6 +1043,7 @@ public class MainUI {
         }
         else {
           BoardSquare btn = new BoardSquare(i, j);
+          btn.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
           boardPane.add(btn, i, j);
           board[i - 1][j - 1] = btn;
         }
@@ -1130,5 +1131,36 @@ public class MainUI {
       int newSize = resizeBoardPane(boardPane, oldValue, newValue);
       buttonPane.setPrefWidth(newSize * 21);
     });
+  }
+
+  @Override
+  public void handle(MouseEvent event) {
+    BoardSquare sq = (BoardSquare)event.getSource();
+    if (sq.getState().isEmpty()) {
+      String colorToPlay = "B";
+      if (this.currentMove.isBlack()) {
+        colorToPlay = "W";
+      }
+      
+      // create move node
+      GameNode move = new GameNode(this.currentMove);
+      String coord = Util.coordToAlpha.get(sq.getX()-1);
+      coord += Util.coordToAlpha.get(sq.getY()-1);
+      move.addProperty(colorToPlay, coord);
+      
+      if (this.currentMove.getNextNode() != null) {
+        this.currentMove.addChild(move);
+      }
+      else {
+        this.currentMove.setNextNode(move);
+        move.setPrevNode(this.currentMove);
+      }
+      
+      game.getGame().postProcess();
+      reinitMoveTreePane();
+      
+      // play on the board
+      virtualBoard.makeMove(move, this.currentMove);
+    }
   }
 }
