@@ -31,6 +31,7 @@ import com.toomasr.sgf4j.movetree.MoveTreeElement;
 import com.toomasr.sgf4j.movetree.TreeStone;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
+import com.toomasr.sgf4j.parser.MoveTimingInfo;
 import com.toomasr.sgf4j.parser.Util;
 import com.toomasr.sgf4j.properties.AppState;
 import com.toomasr.sgf4j.util.ParserUtils;
@@ -481,7 +482,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       whiteLabel = whiteLabel + " [" + whiteRating + "]";
     }
     if (game.getGame().getTimingInfoFound()) {
-      whiteLabel+=" (median per move "+game.getGame().getWTimings().median+"s)";
+      MoveTimingInfo tmpTimings = game.getGame().getWTimings();
+      whiteLabel+=" (med "+tmpTimings.median+"s, max "+tmpTimings.max+"s)";
     }
     whitePlayerName.setText(whiteLabel);
 
@@ -491,7 +493,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       blackLabel = blackLabel + " [" + blackRating + "]";
     }
     if (game.getGame().getTimingInfoFound()) {
-      blackLabel+=" (median per move "+game.getGame().getBTimings().median+"s)";
+      MoveTimingInfo tmpTimings = game.getGame().getBTimings();
+      blackLabel+=" (med "+tmpTimings.median+"s, max "+tmpTimings.max+"s)";
     }
     blackPlayerName.setText(blackLabel);
 
