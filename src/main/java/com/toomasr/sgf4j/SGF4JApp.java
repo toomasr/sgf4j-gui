@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import javax.swing.ImageIcon;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,17 @@ public class SGF4JApp extends Application {
     primaryStage.setMinWidth(1125);
     primaryStage.setMinHeight(800);
     primaryStage.getIcons().add(new Image(SGF4JApp.class.getResourceAsStream("/icon.png")));
+
+    // set Dock icon
+    // https://stackoverflow.com/questions/24159825/changing-application-dock-icon-javafx-programmatically
+    try {
+      URL iconURL = SGF4JApp.class.getResource("/icon.png");
+      java.awt.Image image = new ImageIcon(iconURL).getImage();
+      com.apple.eawt.Application.getApplication().setDockIconImage(image);
+    } catch (Exception e) {
+      // Won't work on Windows or Linux.
+    }
+    // end of Dock icon
 
     MainUI mainUIBuilder = new MainUI(this);
     Pane mainUI = mainUIBuilder.buildUI();
