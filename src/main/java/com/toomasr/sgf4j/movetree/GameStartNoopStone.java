@@ -2,8 +2,8 @@ package com.toomasr.sgf4j.movetree;
 
 import java.util.UUID;
 
-import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.parser.GameNode;
+import com.toomasr.sgf4j.parser.board.StoneState;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;

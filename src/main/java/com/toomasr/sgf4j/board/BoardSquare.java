@@ -1,5 +1,7 @@
 package com.toomasr.sgf4j.board;
 
+import com.toomasr.sgf4j.parser.board.StoneState;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;

@@ -1,9 +1,9 @@
 package com.toomasr.sgf4j.board;
 
-import com.toomasr.sgf4j.board.BoardListener;
-import com.toomasr.sgf4j.board.StoneState;
 import com.toomasr.sgf4j.gui.MainUI;
 import com.toomasr.sgf4j.parser.GameNode;
+import com.toomasr.sgf4j.parser.board.BoardListener;
+import com.toomasr.sgf4j.parser.board.StoneState;
 
 public class GuiBoardListener implements BoardListener {
   private BoardSquare[][] board;
