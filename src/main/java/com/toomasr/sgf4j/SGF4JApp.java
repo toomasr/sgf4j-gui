@@ -1,5 +1,6 @@
 package com.toomasr.sgf4j;
 
+import java.awt.Taskbar;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -44,6 +45,14 @@ public class SGF4JApp extends Application {
     String verInfo = extractVersionFromManifest();
     primaryStage.setTitle("SGF4J - " + verInfo);
     System.out.println("Build information: " + verInfo);
+
+    String javaVersion = System.getProperty("java.version");
+    ;
+    System.out.println("Java: " + javaVersion);
+
+    String javaFxVersion = System.getProperty("javafx.runtime.version");
+    System.out.println("JavaFX: " + javaFxVersion);
+
     primaryStage.setMinWidth(1125);
     primaryStage.setMinHeight(800);
     primaryStage.getIcons().add(new Image(SGF4JApp.class.getResourceAsStream("/icon.png")));
@@ -53,7 +62,8 @@ public class SGF4JApp extends Application {
     try {
       URL iconURL = SGF4JApp.class.getResource("/icon.png");
       java.awt.Image image = new ImageIcon(iconURL).getImage();
-      com.apple.eawt.Application.getApplication().setDockIconImage(image);
+
+      Taskbar.getTaskbar().setIconImage(image);
     } catch (Exception e) {
       // Won't work on Windows or Linux.
     }
@@ -199,6 +209,9 @@ public class SGF4JApp extends Application {
       }
     } catch (IOException e) {
       e.printStackTrace();
+    }
+    if ("".equals(rtrn)) {
+      rtrn = "No build info available";
     }
     return rtrn;
   }
