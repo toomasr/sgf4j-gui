@@ -7,9 +7,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.toomasr.sgf4j.SGF4JApp;
 import com.toomasr.sgf4j.gui.Sgf4jGuiUtil;
 
 public class AppState {
+	private static final Logger logger = LoggerFactory.getLogger(SGF4JApp.class);
   public static final String PROPERTIES_FILE_NAME = "sgf4j-gui.properties";
   public static final String CURRENT_FILE = "current-file";
   
@@ -31,7 +36,7 @@ public class AppState {
       PROPERTIES.store(new FileOutputStream(propertiesFile), "");
     }
     catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
+      logger.info("Unable to find "+PROPERTIES_FILE_NAME+ " Not loading properties.");
     }
     catch (IOException e) {
       throw new RuntimeException(e);
