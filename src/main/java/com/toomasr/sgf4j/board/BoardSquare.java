@@ -125,8 +125,15 @@ public class BoardSquare extends StackPane {
     // on a single square - right now won't support that
     // and always showing the latest one
     removeOverlayText();
+    
     text = new Text(str);
     Font font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, width / FONT_MULTIPLIER);
+    if (str.length() > 1 && str.length() < 4) {
+      font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, width / FONT_MULTIPLIER / 1.5);
+    }
+    else if (str.length() > 3) {
+      font = Font.font(Font.getDefault().getName(), FontWeight.MEDIUM, width / FONT_MULTIPLIER / 3);
+    }
     text.setFont(font);
     text.setStroke(Color.SADDLEBROWN);
     text.setFill(Color.SADDLEBROWN);
@@ -159,12 +166,14 @@ public class BoardSquare extends StackPane {
 
     getChildren().remove(stoneImage);
 
-    stoneImage = getImageView(blackStoneImage);
     if (stoneState.equals(StoneState.WHITE)) {
       stoneImage = getImageView(whiteStoneImage);
+      getChildren().add(stoneImage);
     }
-
-    getChildren().add(stoneImage);
+    else if (stoneState.equals(StoneState.BLACK)) {
+      stoneImage = getImageView(blackStoneImage);
+      getChildren().add(stoneImage);
+    }
   }
 
   private ImageView getImageView(Image stoneImage) {

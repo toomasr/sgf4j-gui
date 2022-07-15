@@ -1,9 +1,11 @@
 package com.toomasr.sgf4j.gui;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.toomasr.sgf4j.SGF4JApp;
-import com.toomasr.sgf4j.parser.Sgf;
-import com.toomasr.sgf4j.parser.SgfProperties;
 import com.toomasr.sgf4j.board.BoardCoordinateLabel;
 import com.toomasr.sgf4j.board.BoardSquare;
 import com.toomasr.sgf4j.board.GuiBoardListener;
@@ -30,6 +30,8 @@ import com.toomasr.sgf4j.movetree.TreeStone;
 import com.toomasr.sgf4j.parser.Game;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.MoveTimingInfo;
+import com.toomasr.sgf4j.parser.Sgf;
+import com.toomasr.sgf4j.parser.SgfProperties;
 import com.toomasr.sgf4j.parser.Util;
 import com.toomasr.sgf4j.parser.board.StoneState;
 import com.toomasr.sgf4j.parser.board.VirtualBoard;
@@ -137,10 +139,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
 
   public Pane buildUI() throws Exception {
     /*
-     * --------------------------
-     * | | | |
-     * | left | center | right |
-     * | | | |
+     * -------------------------- | | | | | left | center | right | | | | |
      * --------------------------
      */
     Insets paneInsets = new Insets(5, 0, 0, 0);
@@ -227,14 +226,21 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     saveGame.setOnAction(e -> {
       if (saveSgf(this.game.getGame(), this.activeGameSgf, this.activeGameEncoding)) {
         updateStatus("Saved game to " + this.activeGameSgf.getFileName());
-      }
-      else {
+      } else {
         updateStatus("File not saved " + this.activeGameSgf.getFileName());
       }
 
     });
 
+    MenuItem saveGamePosition = new MenuItem("Save as Position");
+    saveGamePosition.setOnAction(e -> {
+      saveSgfCurrentPosition(this.game.getGame(), this.currentMove, virtualBoard, this.activeGameSgf,
+          this.activeGameEncoding);
+    });
+
     fileMenu.getItems().add(saveGame);
+    fileMenu.getItems().add(saveGamePosition);
+
     fileMenu.getItems().add(new SeparatorMenuItem());
     fileMenu.getItems().add(restartUIMenuItem);
 
@@ -248,6 +254,30 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       return true;
     }
     return false;
+  }
+
+  private boolean saveSgfCurrentPosition(Game game, GameNode move, VirtualBoard vBoard, Path origFilePath,
+      String encoding) {
+    String fileName = origFilePath.getFileName().toString().substring(0,
+        origFilePath.getFileName().toString().indexOf("."));
+    String copyDescriptor = "-copy";
+    Path outputFile = origFilePath.getParent().resolve(fileName + copyDescriptor + ".sgf");
+    // we append -copy...-copy until we find a file
+    // that doesn't exist yet and use that one
+    while (Files.exists(outputFile)) {
+      copyDescriptor = copyDescriptor + "-copy";
+      outputFile = origFilePath.getParent().resolve(fileName + copyDescriptor + ".sgf");
+    }
+
+    File file = Sgf.writeToFile(game.getPositionSgf(move, vBoard));
+    try {
+      Files.move(Paths.get(file.toURI()), outputFile, StandardCopyOption.ATOMIC_MOVE);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return false;
+    }
+    System.out.println("Wrote position SGF to "+outputFile.toString());
+    return true;
   }
 
   private HBox generateStatusBar() {
@@ -297,7 +327,6 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     TitledPane tPane = new TitledPane("Game Info", pane);
     vbox.getChildren().add(tPane);
 
-
     pane = new GridPane();
     Label label = new Label("Last opened: ");
     pane.add(label, 0, 0);
@@ -328,38 +357,40 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
 
     GridPane.setHalignment(label, HPos.CENTER);
     GridPane.setColumnSpan(label, 2);
-    //pane.add(label, 1, 4);
+    // pane.add(label, 1, 4);
 
     HBox hbox = new HBox();
-    Button[] sortButtons = new Button[] { new Button("Name"), new Button("Difficulty")};
+    Button[] sortButtons = new Button[] { new Button("Name"), new Button("Difficulty") };
     for (int i = 0; i < sortButtons.length; i++) {
       Button btn = sortButtons[i];
       if (i == 0) {
-      	btn.getStyleClass().add("btn-selected");
+        btn.getStyleClass().add("btn-selected");
       }
       hbox.getChildren().add(btn);
       btn.setOnAction(e -> {
-        //MainUI.this.game.updateFileStatus(btn.getText());
-        //resetProblemStatusButtonStyles();
-      	for (int j = 0; j < sortButtons.length; j++) {
-					sortButtons[j].getStyleClass().remove("btn-selected");
-				}
+        // MainUI.this.game.updateFileStatus(btn.getText());
+        // resetProblemStatusButtonStyles();
+        for (int j = 0; j < sortButtons.length; j++) {
+          sortButtons[j].getStyleClass().remove("btn-selected");
+        }
         btn.getStyleClass().add("btn-selected");
-        //updateMetaInfoForGame(game);
+        // updateMetaInfoForGame(game);
 
         // trigger the event to update the icon
-        //TreeItem<File> selectedItem = fileTreeView.getSelectionModel().getSelectedItem();
-        //Event.fireEvent(selectedItem, new TreeModificationEvent<File>(TreeItem.<File>valueChangedEvent(), selectedItem, selectedItem.getValue()));
+        // TreeItem<File> selectedItem =
+        // fileTreeView.getSelectionModel().getSelectedItem();
+        // Event.fireEvent(selectedItem, new
+        // TreeModificationEvent<File>(TreeItem.<File>valueChangedEvent(), selectedItem,
+        // selectedItem.getValue()));
       });
     }
 
     GridPane.setColumnSpan(hbox, 2);
     GridPane.setHalignment(hbox, HPos.CENTER);
-    //pane.add(hbox, 0, 5);
+    // pane.add(hbox, 0, 5);
 
     tPane = new TitledPane("Folder information", pane);
     vbox.getChildren().add(tPane);
-
 
     ///////////////////////////////////////////////
     pane = new GridPane();
@@ -389,7 +420,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
 
     hbox = new HBox();
 
-    problemStatusButtons = new Button[] { new Button("None"), new Button("Easy"), new Button("Medium"), new Button("Difficult"), new Button("Fail"), };
+    problemStatusButtons = new Button[] { new Button("None"), new Button("Easy"), new Button("Medium"),
+        new Button("Difficult"), new Button("Fail"), };
     for (int i = 0; i < problemStatusButtons.length; i++) {
       Button btn = problemStatusButtons[i];
       hbox.getChildren().add(btn);
@@ -401,7 +433,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
 
         // trigger the event to update the icon
         TreeItem<File> selectedItem = fileTreeView.getSelectionModel().getSelectedItem();
-        Event.fireEvent(selectedItem, new TreeModificationEvent<File>(TreeItem.<File>valueChangedEvent(), selectedItem, selectedItem.getValue()));
+        Event.fireEvent(selectedItem,
+            new TreeModificationEvent<File>(TreeItem.<File>valueChangedEvent(), selectedItem, selectedItem.getValue()));
       });
     }
 
@@ -453,6 +486,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     this.game = new MyGame(Sgf.createFromPath(pathToSgf, encoding), pathToSgf);
 
     currentMove = game.getRootNode();
+
     prevMove = null;
 
     // reset our virtual board and actual board
@@ -483,7 +517,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     }
     if (game.getGame().getTimingInfoFound()) {
       MoveTimingInfo tmpTimings = game.getGame().getWTimings();
-      whiteLabel+=" (med "+tmpTimings.median+"s, max "+tmpTimings.max+"s)";
+      whiteLabel += " (med " + tmpTimings.median + "s, max " + tmpTimings.max + "s)";
     }
     whitePlayerName.setText(whiteLabel);
 
@@ -494,14 +528,14 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     }
     if (game.getGame().getTimingInfoFound()) {
       MoveTimingInfo tmpTimings = game.getGame().getBTimings();
-      blackLabel+=" (med "+tmpTimings.median+"s, max "+tmpTimings.max+"s)";
+      blackLabel += " (med " + tmpTimings.median + "s, max " + tmpTimings.max + "s)";
     }
     blackPlayerName.setText(blackLabel);
 
     this.folderInfoLastOpened.setText(game.getFolderInfoLastOpened());
-    this.folderInfoNumberOfProblems.setText(game.getFolderInfoNumberOfProblems()+" SGF files");
-    this.folderInfoNumberOfSolved.setText(game.getFolderInfoNumberOfSolved()+"");
-    this.folderInfoNumberOfFailed.setText(game.getFolderInfoNumberOfFailed()+"");
+    this.folderInfoNumberOfProblems.setText(game.getFolderInfoNumberOfProblems() + " SGF files");
+    this.folderInfoNumberOfSolved.setText(game.getFolderInfoNumberOfSolved() + "");
+    this.folderInfoNumberOfFailed.setText(game.getFolderInfoNumberOfFailed() + "");
 
     String lastOpened = game.getLastOpenedPretty();
     this.lastOpened.setText(lastOpened);
@@ -527,18 +561,20 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
   private void placePreGameStones(MyGame game) {
     String blackStones = game.getProperty("AB", "");
     String whiteStones = game.getProperty("AW", "");
+    String removeStones = game.getProperty("AE", "");
 
-    placePlacementGameStones(blackStones, whiteStones);
+    placePlacementGameStones(blackStones, whiteStones, removeStones);
   }
 
   private void placePlacementStones(GameNode node) {
     String blackStones = node.getProperty("AB", "");
     String whiteStones = node.getProperty("AW", "");
+    String removeStones = node.getProperty("AE", "");
 
-    placePlacementGameStones(blackStones, whiteStones);
+    placePlacementGameStones(blackStones, whiteStones, removeStones);
   }
 
-  private void placePlacementGameStones(String addBlack, String addWhite) {
+  private void placePlacementGameStones(String addBlack, String addWhite, String stonesToBeRemoved) {
     if (addBlack.length() > 0) {
       String[] blackStones = addBlack.split(",");
       // actually the stones can also contain not just points but sequences
@@ -564,6 +600,21 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       for (int i = 0; i < whiteStones.length; i++) {
         int[] moveCoords = Util.alphaToCoords(whiteStones[i]);
         virtualBoard.placeStone(StoneState.WHITE, moveCoords[0], moveCoords[1]);
+      }
+    }
+    
+    if (stonesToBeRemoved.length() > 0) {
+      String[] removeStones = stonesToBeRemoved.split(",");
+      // actually the stones can also contain not just points but sequences
+      // of points so instead of a coordinate like dq, dr, ds it might contain
+      // dq:ds. Let us translate those to actual single coordinates!
+      if (stonesToBeRemoved.contains(":")) {
+        removeStones = Util.coordSequencesToSingle(stonesToBeRemoved);
+      }
+      
+      for (int i = 0; i < removeStones.length; i++) {
+        int[] moveCoords = Util.alphaToCoords(removeStones[i]);
+        virtualBoard.placeStone(StoneState.EMPTY, moveCoords[0], moveCoords[1]);
       }
     }
   }
@@ -593,20 +644,21 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     }
 
   }
-  
+
   private void reinitMoveTreePane() {
     // I used to just getChildren().clear() but it produces problems
-    // See https://stackoverflow.com/questions/36862282/javafx-8-duplicate-children-after-getchildren-clear
+    // See
+    // https://stackoverflow.com/questions/36862282/javafx-8-duplicate-children-after-getchildren-clear
     // So instead I'm generating a fresh pane
     movePane = generateMoveTreePane();
     treePaneScrollPane.setContent(movePane);
 
     GameStartNoopStone rootStone = new GameStartNoopStone(game.getRootNode());
     movePane.add(rootStone, 0, 0);
-    
+
     nodeToTreeStone.clear();
     configureMoveTreeElement(game.getRootNode(), rootStone);
-    
+
     populateMoveTreePane(game.getRootNode(), 0);
   }
 
@@ -649,8 +701,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
         if (moveNo == -1) {
           moveNo = 0;
           nodeVisualDepth = 0;
-        }
-        else if (nodeVisualDepth == -1) {
+        } else if (nodeVisualDepth == -1) {
           nodeVisualDepth = 0;
         }
 
@@ -680,8 +731,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
   }
 
   /*
-   * Generates the boilerplate for the move tree pane. The
-   * pane is actually populated during game initialization.
+   * Generates the boilerplate for the move tree pane. The pane is actually
+   * populated during game initialization.
    */
   private ScrollPane generateMoveTreeScrollPane() {
     ScrollPane scrollPane = new ScrollPane();
@@ -719,8 +770,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     if (move.getMoveNo() != -1) {
       virtualBoard.fastForwardTo(move);
       highLightStoneOnBoard(move);
-    }
-    else {
+    } else {
       virtualBoard.fastForwardTo(move);
     }
   }
@@ -806,12 +856,11 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       virtualBoard.makeMove(currentMove, prevMove);
       // scroll the move tree to make the highlighted move visible
       ensureVisibleForActiveTreeNode(currentMove);
-    }
-    else {
-    	GameNode node = ParserUtils.findCorrespondingBelowMove(currentMove);
-    	if (node != null) {
-    		fastForwardTo(node);
-    	}
+    } else {
+      GameNode node = ParserUtils.findCorrespondingBelowMove(currentMove);
+      if (node != null) {
+        fastForwardTo(node);
+      }
     }
   }
 
@@ -825,16 +874,16 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
   }
 
   private void handleUpPressed() {
-  	// we are on the top line already, nowhere to go
-  	if (currentMove.getVisualDepth() < 1) {
-  		return;
-  	}
+    // we are on the top line already, nowhere to go
+    if (currentMove.getVisualDepth() < 1) {
+      return;
+    }
 
-  	GameNode node = ParserUtils.findCorrespondingTopMove(currentMove);
-  	// only ff if such a move exists
-  	if (node != null) {
-  	  fastForwardTo(node);
-  	}
+    GameNode node = ParserUtils.findCorrespondingTopMove(currentMove);
+    // only ff if such a move exists
+    if (node != null) {
+      fastForwardTo(node);
+    }
   }
 
   public void playMove(GameNode move, GameNode prevMove) {
@@ -859,7 +908,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     deHighLightStoneInTree();
     highLightStoneInTree(move);
 
-    if (move != null && (move.getProperty("AB") != null || move.getProperty("AW") != null)) {
+    if (move != null && (move.getProperty("AB") != null || move.getProperty("AW") != null || move.getProperty("AE") != null)) {
       placePlacementStones(move);
     }
 
@@ -939,8 +988,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       stone.highLight();
       stone.requestFocus();
       highlightedTreeStone.add(stone);
-    }
-    else {
+    } else {
       System.out.println("Not highlighting stone, can't find " + move.hashCode());
     }
   }
@@ -957,8 +1005,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     if (comment == null) {
       if (move.getParentNode() == null && game.getProperty("C") != null) {
         comment = game.getProperty("C");
-      }
-      else {
+      } else {
         comment = "";
       }
     }
@@ -1043,8 +1090,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
         if (i == 0 || j == 0 || i == 20 || j == 20) {
           BoardCoordinateLabel btn = new BoardCoordinateLabel(i, j);
           boardPane.add(btn, i, j);
-        }
-        else {
+        } else {
           BoardSquare btn = new BoardSquare(i, j);
           btn.addEventHandler(MouseEvent.MOUSE_CLICKED, this);
           boardPane.add(btn, i, j);
@@ -1088,8 +1134,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       if ((i < 22 || i > 418 || i % 21 == 0 || (i + 1) % 21 == 0)) {
         BoardCoordinateLabel sq = (BoardCoordinateLabel) boardPane.getChildren().get(i);
         sq.resizeTo(newSize);
-      }
-      else {
+      } else {
         stone = (BoardSquare) boardPane.getChildren().get(i);
         stone.resizeTo(newSize);
       }
@@ -1110,14 +1155,11 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
         if (event.getEventType().equals(KeyEvent.KEY_PRESSED)) {
           if (event.getCode().equals(KeyCode.LEFT)) {
             handlePreviousPressed();
-          }
-          else if (event.getCode().equals(KeyCode.RIGHT)) {
+          } else if (event.getCode().equals(KeyCode.RIGHT)) {
             handleNextPressed();
-          }
-          else if (event.getCode().equals(KeyCode.DOWN)) {
+          } else if (event.getCode().equals(KeyCode.DOWN)) {
             handleNextBranch();
-          }
-          else if (event.getCode().equals(KeyCode.UP)) {
+          } else if (event.getCode().equals(KeyCode.UP)) {
             handleUpPressed();
           }
         }
@@ -1138,29 +1180,57 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
 
   @Override
   public void handle(MouseEvent event) {
-    BoardSquare sq = (BoardSquare)event.getSource();
+    BoardSquare sq = (BoardSquare) event.getSource();
     if (sq.getState().isEmpty()) {
       String colorToPlay = "B";
       if (this.currentMove.isBlack()) {
         colorToPlay = "W";
       }
-      
+      else if (this.currentMove.isWhite()) {
+        colorToPlay = "B";
+      }
+      else if (currentMove.getProperty("PL") != null) {
+        colorToPlay = currentMove.getProperty("PL");
+      }
+      else if (game.getProperty("PL") != null) {
+        colorToPlay = game.getProperty("PL");
+      }
+
       // create move node
-      GameNode move = new GameNode(this.currentMove);
-      String coord = Util.coordToAlpha.get(sq.getX()-1);
-      coord += Util.coordToAlpha.get(sq.getY()-1);
-      move.addProperty(colorToPlay, coord);
+      int x = sq.getX() - 1;
+      int y = sq.getY() - 1;
+      GameNode move = null;
       
-      if (this.currentMove.getNextNode() != null) {
-        this.currentMove.addChild(move);
-      }
-      else {
-        this.currentMove.setNextNode(move);
-        move.setPrevNode(this.currentMove);
+      if (currentMove.getNextNode()!= null && currentMove.getNextNode().getMoveString() != null && currentMove.getNextNode().getCoords()[0] == x && currentMove.getNextNode().getCoords()[1] == y
+          && currentMove.getNextNode().getColor().equals(colorToPlay)) {
+        move = currentMove.getNextNode();
       }
       
-      game.getGame().postProcess();
-      reinitMoveTreePane();
+      for (Iterator<GameNode> ite = currentMove.getChildren().iterator(); ite.hasNext();) {
+        GameNode tmpNode = ite.next();
+        if (tmpNode.getCoords()[0] == x && tmpNode.getCoords()[1] == y && tmpNode.getColor().equals(colorToPlay)
+            && tmpNode.getColor().equals(colorToPlay)) {
+          move = tmpNode;
+          break;
+        }
+      }
+      
+      if (move == null) {
+        move = new GameNode(this.currentMove);
+        String coord = Util.coordToAlpha.get(x);
+        coord += Util.coordToAlpha.get(y);
+        move.addProperty(colorToPlay, coord);
+        
+        if (this.currentMove.getNextNode() != null) {
+          this.currentMove.addChild(move);
+        } else {
+          this.currentMove.setNextNode(move);
+          move.setPrevNode(this.currentMove);
+        }
+        
+        game.getGame().postProcess();
+        reinitMoveTreePane();
+      }
       
       // play on the board
       virtualBoard.makeMove(move, this.currentMove);

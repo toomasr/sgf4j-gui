@@ -47,7 +47,6 @@ public class SGF4JApp extends Application {
     System.out.println("Build information: " + verInfo);
 
     String javaVersion = System.getProperty("java.version");
-    ;
     System.out.println("Java: " + javaVersion);
 
     String javaFxVersion = System.getProperty("javafx.runtime.version");
