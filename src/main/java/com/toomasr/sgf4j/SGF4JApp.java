@@ -1,6 +1,7 @@
 package com.toomasr.sgf4j;
 
 import java.awt.Taskbar;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -39,7 +40,12 @@ public class SGF4JApp extends Application {
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    AppState.getInstance().loadState();
+    try {
+      AppState.getInstance().loadState();
+    }
+    catch (FileNotFoundException e) {
+      // fine to ignore
+    }
 
     SvgImageLoaderFactory.install(new PrimitiveDimensionProvider());
     String verInfo = extractVersionFromManifest();

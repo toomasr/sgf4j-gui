@@ -43,12 +43,12 @@ public class AppState {
     }
   }
 
-  public void loadState() {
+  public void loadState() throws FileNotFoundException {
     try {
       PROPERTIES.load(new FileInputStream(propertiesFile));
     }
     catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
+      throw e;
     }
     catch (IOException e) {
       throw new RuntimeException(e);
