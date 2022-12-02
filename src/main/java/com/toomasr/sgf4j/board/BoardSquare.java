@@ -2,12 +2,9 @@ package com.toomasr.sgf4j.board;
 
 import com.toomasr.sgf4j.parser.board.StoneState;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -18,13 +15,13 @@ import javafx.scene.text.Text;
 
 public class BoardSquare extends StackPane {
   private static final Image blackStoneImage = new Image(
-      BoardSquare.class.getResourceAsStream("/stones/regular/black-stone.svg"));
+      BoardSquare.class.getResourceAsStream("/stones/regular/black-stone.png"));
   private static final Image blackStoneHighlightedImage = new Image(
-      BoardSquare.class.getResourceAsStream("/stones/regular/black-stone-highlighted.svg"));
+      BoardSquare.class.getResourceAsStream("/stones/regular/black-stone-highlighted.png"));
   private static final Image whiteStoneImage = new Image(
-      BoardSquare.class.getResourceAsStream("/stones/regular/white-stone.svg"));
+      BoardSquare.class.getResourceAsStream("/stones/regular/white-stone.png"));
   private static final Image whiteStoneHighlightedImage = new Image(
-      BoardSquare.class.getResourceAsStream("/stones/regular/white-stone-highlighted.svg"));
+      BoardSquare.class.getResourceAsStream("/stones/regular/white-stone-highlighted.png"));
   public static int width = 29;
 
   private static final double FONT_MULTIPLIER = 1.8125;

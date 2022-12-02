@@ -17,8 +17,6 @@ import org.slf4j.LoggerFactory;
 import com.toomasr.sgf4j.gui.MainUI;
 import com.toomasr.sgf4j.properties.AppState;
 
-import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory;
-import de.codecentric.centerdevice.javafxsvg.dimension.PrimitiveDimensionProvider;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -47,7 +45,7 @@ public class SGF4JApp extends Application {
       // fine to ignore
     }
 
-    SvgImageLoaderFactory.install(new PrimitiveDimensionProvider());
+    //SvgImageLoaderFactory.install(new PrimitiveDimensionProvider());
     String verInfo = extractVersionFromManifest();
     primaryStage.setTitle("SGF4J - " + verInfo);
     System.out.println("Build information: " + verInfo);

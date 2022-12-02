@@ -222,6 +222,17 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       app.scheduleRestartUI();
     });
 
+    MenuItem newGame = new MenuItem("New Game");
+    newGame.setOnAction(e -> {
+      Path temp;
+      try {
+        temp = Files.createTempFile(null, ".sgf");
+        initializeGame(temp);
+      } catch (IOException e1) {
+        throw new RuntimeException(e1);
+      }
+    });
+
     MenuItem saveGame = new MenuItem("Save");
     saveGame.setOnAction(e -> {
       if (saveSgf(this.game.getGame(), this.activeGameSgf, this.activeGameEncoding)) {
@@ -238,6 +249,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
           this.activeGameEncoding);
     });
 
+    fileMenu.getItems().add(newGame);
     fileMenu.getItems().add(saveGame);
     fileMenu.getItems().add(saveGamePosition);
 
@@ -276,7 +288,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       e.printStackTrace();
       return false;
     }
-    System.out.println("Wrote position SGF to "+outputFile.toString());
+    System.out.println("Wrote position SGF to " + outputFile.toString());
     return true;
   }
 
@@ -602,7 +614,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
         virtualBoard.placeStone(StoneState.WHITE, moveCoords[0], moveCoords[1]);
       }
     }
-    
+
     if (stonesToBeRemoved.length() > 0) {
       String[] removeStones = stonesToBeRemoved.split(",");
       // actually the stones can also contain not just points but sequences
@@ -611,7 +623,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       if (stonesToBeRemoved.contains(":")) {
         removeStones = Util.coordSequencesToSingle(stonesToBeRemoved);
       }
-      
+
       for (int i = 0; i < removeStones.length; i++) {
         int[] moveCoords = Util.alphaToCoords(removeStones[i]);
         virtualBoard.placeStone(StoneState.EMPTY, moveCoords[0], moveCoords[1]);
@@ -908,7 +920,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     deHighLightStoneInTree();
     highLightStoneInTree(move);
 
-    if (move != null && (move.getProperty("AB") != null || move.getProperty("AW") != null || move.getProperty("AE") != null)) {
+    if (move != null
+        && (move.getProperty("AB") != null || move.getProperty("AW") != null || move.getProperty("AE") != null)) {
       placePlacementStones(move);
     }
 
@@ -1185,14 +1198,11 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       String colorToPlay = "B";
       if (this.currentMove.isBlack()) {
         colorToPlay = "W";
-      }
-      else if (this.currentMove.isWhite()) {
+      } else if (this.currentMove.isWhite()) {
         colorToPlay = "B";
-      }
-      else if (currentMove.getProperty("PL") != null) {
+      } else if (currentMove.getProperty("PL") != null) {
         colorToPlay = currentMove.getProperty("PL");
-      }
-      else if (game.getProperty("PL") != null) {
+      } else if (game.getProperty("PL") != null) {
         colorToPlay = game.getProperty("PL");
       }
 
@@ -1200,12 +1210,13 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       int x = sq.getX() - 1;
       int y = sq.getY() - 1;
       GameNode move = null;
-      
-      if (currentMove.getNextNode()!= null && currentMove.getNextNode().getMoveString() != null && currentMove.getNextNode().getCoords()[0] == x && currentMove.getNextNode().getCoords()[1] == y
+
+      if (currentMove.getNextNode() != null && currentMove.getNextNode().getMoveString() != null
+          && currentMove.getNextNode().getCoords()[0] == x && currentMove.getNextNode().getCoords()[1] == y
           && currentMove.getNextNode().getColor().equals(colorToPlay)) {
         move = currentMove.getNextNode();
       }
-      
+
       for (Iterator<GameNode> ite = currentMove.getChildren().iterator(); ite.hasNext();) {
         GameNode tmpNode = ite.next();
         if (tmpNode.getCoords()[0] == x && tmpNode.getCoords()[1] == y && tmpNode.getColor().equals(colorToPlay)
@@ -1214,24 +1225,24 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
           break;
         }
       }
-      
+
       if (move == null) {
         move = new GameNode(this.currentMove);
         String coord = Util.coordToAlpha.get(x);
         coord += Util.coordToAlpha.get(y);
         move.addProperty(colorToPlay, coord);
-        
+
         if (this.currentMove.getNextNode() != null) {
           this.currentMove.addChild(move);
         } else {
           this.currentMove.setNextNode(move);
           move.setPrevNode(this.currentMove);
         }
-        
+
         game.getGame().postProcess();
         reinitMoveTreePane();
       }
-      
+
       // play on the board
       virtualBoard.makeMove(move, this.currentMove);
     }
