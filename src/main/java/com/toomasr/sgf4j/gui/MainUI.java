@@ -476,10 +476,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
         if (Util.sgfEscapeText(newValue).equals(currentMove.getProperty("C"))) {
           return;
         }
-        if (Util.sgfEscapeText(newValue).equals(currentMove.getUpdatedProperty("C"))) {
-          return;
-        }
-        currentMove.addUpdatedProperty("C", Util.sgfEscapeText(newValue));
+        currentMove.addProperty("C", Util.sgfEscapeText(newValue));
       }
     });
 
@@ -519,6 +516,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     treePaneScrollPane.setVvalue(0);
 
     moveNoField.setText("0");
+    nextButton.requestFocus();
   }
 
   private void updateMetaInfoForGame(MyGame game) {
