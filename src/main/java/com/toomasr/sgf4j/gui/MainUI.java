@@ -20,6 +20,7 @@ import com.toomasr.sgf4j.SGF4JApp;
 import com.toomasr.sgf4j.board.BoardCoordinateLabel;
 import com.toomasr.sgf4j.board.BoardSquare;
 import com.toomasr.sgf4j.board.GuiBoardListener;
+import com.toomasr.sgf4j.filetree.FileChangesWatcher;
 import com.toomasr.sgf4j.filetree.FileTreeView;
 import com.toomasr.sgf4j.metasystem.ProblemStatus;
 import com.toomasr.sgf4j.movetree.GameStartNoopStone;
@@ -805,6 +806,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
           File file = item.getValue().toPath().toFile();
           if (file.isFile()) {
             initializeGame(item.getValue().toPath());
+            fileTreeView.startMonitoring(item.getValue().toPath().getParent());
           }
           AppState.getInstance().addProperty(AppState.CURRENT_FILE, file.getAbsolutePath());
         }

@@ -40,12 +40,10 @@ public class SGF4JApp extends Application {
   public void start(Stage primaryStage) throws Exception {
     try {
       AppState.getInstance().loadState();
-    }
-    catch (FileNotFoundException e) {
+    } catch (FileNotFoundException e) {
       // fine to ignore
     }
 
-    //SvgImageLoaderFactory.install(new PrimitiveDimensionProvider());
     String verInfo = extractVersionFromManifest();
     primaryStage.setTitle("SGF4J - " + verInfo);
     System.out.println("Build information: " + verInfo);

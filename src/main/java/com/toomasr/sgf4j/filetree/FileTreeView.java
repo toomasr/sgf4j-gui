@@ -1,6 +1,7 @@
 package com.toomasr.sgf4j.filetree;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import com.toomasr.sgf4j.gui.Sgf4jGuiUtil;
 import com.toomasr.sgf4j.properties.AppState;
 
+import javafx.application.Platform;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -15,6 +17,10 @@ import javafx.scene.control.TreeView;
 import javafx.util.Callback;
 
 public class FileTreeView extends TreeView<File> {
+  private FileChangesWatcher fileChangesWatcher;
+  private TreeItem<File> fakeRoot;
+  private Thread fileChangesWatcherThread;
+
   public FileTreeView() {
     super();
 
@@ -27,7 +33,7 @@ public class FileTreeView extends TreeView<File> {
       }
     });
 
-    final TreeItem<File> fakeRoot = new TreeItem<File>();
+    fakeRoot = new TreeItem<File>();
     setRoot(fakeRoot);
     setShowRoot(false);
 
@@ -43,9 +49,9 @@ public class FileTreeView extends TreeView<File> {
   }
 
   /**
-   * We'll try to open the tree at the last saved location. If there is
-   * no last saved location or it doesn't exist then we'll open at the
-   * home folder reported by {@link Sgf4jGuiUtil}.
+   * We'll try to open the tree at the last saved location. If there is no last
+   * saved location or it doesn't exist then we'll open at the home folder
+   * reported by {@link Sgf4jGuiUtil}.
    *
    * @param fakeRoot the root of the TreeView
    */
@@ -64,7 +70,7 @@ public class FileTreeView extends TreeView<File> {
     scrollTo(getSelectionModel().getSelectedIndex());
   }
 
-  private TreeItem<File> findMatchingTreeItemFromView(List<TreeItem<File>> root, final File homeFolder) {
+  private FileTreeItem findMatchingTreeItemFromView(List<TreeItem<File>> root, final File homeFolder) {
     List<String> pathElems = tokenizePath(homeFolder);
     TreeItem<File> rtrn = null;
 
@@ -91,7 +97,7 @@ public class FileTreeView extends TreeView<File> {
       // now lets go a level deeper
       root = children;
     }
-    return rtrn;
+    return (FileTreeItem) rtrn;
   }
 
   private List<String> tokenizePath(File homeFolder) {
@@ -99,8 +105,32 @@ public class FileTreeView extends TreeView<File> {
     List<String> pathElems = new ArrayList<>();
     do {
       pathElems.add(file.getName());
-    }
-    while ((file = file.getParentFile()) != null);
+    } while ((file = file.getParentFile()) != null);
     return pathElems;
+  }
+
+  public void startMonitoring(Path path) {
+    if (fileChangesWatcher != null) {
+      if (fileChangesWatcher.getPath().equals(path)) {
+        return;
+      }
+      
+      fileChangesWatcher.stop();
+      fileChangesWatcherThread.interrupt();
+    }
+
+    fileChangesWatcher = new FileChangesWatcher(this, path);
+    fileChangesWatcherThread = new Thread(fileChangesWatcher);
+    fileChangesWatcherThread.setDaemon(true);
+    fileChangesWatcherThread.setName("file watcher - "+path.getFileName().toString()+" "+(int)(Math.random()*100));
+    fileChangesWatcherThread.start();
+  }
+
+  public void refreshFolder(Path path) {
+    FileTreeItem parentTreeItem = this.findMatchingTreeItemFromView(fakeRoot.getChildren(), path.toFile());
+    Platform.runLater(() -> {
+      parentTreeItem.refresh();
+      getSelectionModel().select(parentTreeItem);
+    });
   }
 }

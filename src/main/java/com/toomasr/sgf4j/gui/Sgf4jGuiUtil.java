@@ -20,11 +20,11 @@ public class Sgf4jGuiUtil {
   }
 
   public static File getAppHomeFolder() {
-    File appHomeFolder = new File( getHomeFolder(), ".sgf4j-gui");
+    File appHomeFolder = new File(getHomeFolder(), ".sgf4j-gui");
     if (!appHomeFolder.exists()) {
       boolean flag = appHomeFolder.mkdir();
       if (!flag) {
-        throw new RuntimeException("Unable to create app home folder "+appHomeFolder.getAbsolutePath());
+        throw new RuntimeException("Unable to create app home folder " + appHomeFolder.getAbsolutePath());
       }
     }
     return appHomeFolder;

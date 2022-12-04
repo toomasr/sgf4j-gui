@@ -19,7 +19,6 @@ public class FileTreeItem extends TreeItem<File> {
     super(file);
 
     expandedProperty().addListener(new ChangeListener<Boolean>() {
-
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         BooleanProperty bb = (BooleanProperty) observable;
@@ -32,8 +31,15 @@ public class FileTreeItem extends TreeItem<File> {
         ObservableList<TreeItem<File>> children = generateChildrenForItem(t);
         t.getChildren().addAll(children);
       }
-
     });
+  }
+
+  public void refresh() {
+    isFirstTimeChildren = true;
+    isFirstTimeLeaf = true;
+    getChildren().clear();
+    ObservableList<TreeItem<File>> children = generateChildrenForItem(this);
+    getChildren().addAll(children);
   }
 
   @Override
