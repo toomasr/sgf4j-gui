@@ -36,6 +36,10 @@ public class MyGame {
   public String getProperty(String string, String def) {
     return this.game.getProperty(string, def);
   }
+  
+  public void setProperty(String key, String value) {
+    this.game.setProperty(key, value);
+  }
 
   public void updateFileOpened() {
     MetaSystem.updateFileOpened(sgfPath);

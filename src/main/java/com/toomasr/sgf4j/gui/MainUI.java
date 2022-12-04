@@ -20,7 +20,6 @@ import com.toomasr.sgf4j.SGF4JApp;
 import com.toomasr.sgf4j.board.BoardCoordinateLabel;
 import com.toomasr.sgf4j.board.BoardSquare;
 import com.toomasr.sgf4j.board.GuiBoardListener;
-import com.toomasr.sgf4j.filetree.FileChangesWatcher;
 import com.toomasr.sgf4j.filetree.FileTreeView;
 import com.toomasr.sgf4j.metasystem.ProblemStatus;
 import com.toomasr.sgf4j.movetree.GameStartNoopStone;
@@ -194,8 +193,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
 
     // lets put everything into a rootbox!
     HBox rootHBox = new HBox();
-    enableKeyboardShortcuts(rootHBox);
     rootHBox.getChildren().addAll(leftVBox, centerVBox, rightVBox);
+    enableKeyboardShortcuts(centerVBox);
     HBox.setHgrow(leftVBox, Priority.ALWAYS);
     HBox.setHgrow(rightVBox, Priority.SOMETIMES);
 
@@ -474,10 +473,17 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
           return;
         if (newValue.trim().isEmpty())
           return;
-        if (Util.sgfEscapeText(newValue).equals(currentMove.getProperty("C"))) {
-          return;
+        if (currentMove.getMoveNo() < 0) {
+          if (Util.sgfEscapeText(newValue).equals(game.getProperty("C"))) {
+            return;
+          }
+          game.setProperty("C", Util.sgfEscapeText(newValue));
+        } else {
+          if (Util.sgfEscapeText(newValue).equals(currentMove.getProperty("C"))) {
+            return;
+          }
+          currentMove.addProperty("C", Util.sgfEscapeText(newValue));
         }
-        currentMove.addProperty("C", Util.sgfEscapeText(newValue));
       }
     });
 
@@ -1156,15 +1162,19 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     return newSize;
   }
 
-  private void enableKeyboardShortcuts(HBox topHBox) {
-    topHBox.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+  private void enableKeyboardShortcuts(Pane pane) {
+    pane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
-        if (event.isMetaDown())
+        System.out.println("MainUI - "+event.getCode()+ " "+event.getSource());
+        if (event.isMetaDown()) {
           return;
+        }
+
         // wow, this is bad style but works right now
         if (commentArea.isFocused())
           return;
+
         if (event.getEventType().equals(KeyEvent.KEY_PRESSED)) {
           if (event.getCode().equals(KeyCode.LEFT)) {
             handlePreviousPressed();
@@ -1174,6 +1184,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
             handleNextBranch();
           } else if (event.getCode().equals(KeyCode.UP)) {
             handleUpPressed();
+          } else if (event.getCode().equals(KeyCode.F2)) {
+            fileTreeView.editSelectedItem();
           }
         }
       }

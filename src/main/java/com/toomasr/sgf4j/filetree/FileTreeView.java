@@ -3,33 +3,39 @@ package com.toomasr.sgf4j.filetree;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.toomasr.sgf4j.gui.Sgf4jGuiUtil;
 import com.toomasr.sgf4j.properties.AppState;
 
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
 public class FileTreeView extends TreeView<File> {
   private FileChangesWatcher fileChangesWatcher;
   private TreeItem<File> fakeRoot;
   private Thread fileChangesWatcherThread;
+  private Set<FileFormatCell> fileFormatCells = new HashSet<>();
 
   public FileTreeView() {
     super();
 
     getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
+    setEditable(false);
     setCellFactory(new Callback<TreeView<File>, TreeCell<File>>() {
       @Override
       public TreeCell<File> call(TreeView<File> param) {
-        return new FileFormatCell();
+        return new FileFormatCell(FileTreeView.this);
       }
     });
 
@@ -46,6 +52,13 @@ public class FileTreeView extends TreeView<File> {
     fakeRoot.getChildren().addAll(treeItems);
 
     openTreeAtRightLocation(fakeRoot);
+
+    addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+
+      @Override
+      public void handle(KeyEvent event) {
+      }
+    });
   }
 
   /**
@@ -62,6 +75,8 @@ public class FileTreeView extends TreeView<File> {
       File tmpFile = new File(fileToOpen);
       if (tmpFile.exists()) {
         rightLocation = tmpFile;
+      } else if (tmpFile.toPath().getParent().toFile().exists()) {
+        rightLocation = tmpFile.toPath().getParent().toFile();
       }
     }
 
@@ -114,7 +129,7 @@ public class FileTreeView extends TreeView<File> {
       if (fileChangesWatcher.getPath().equals(path)) {
         return;
       }
-      
+
       fileChangesWatcher.stop();
       fileChangesWatcherThread.interrupt();
     }
@@ -122,7 +137,8 @@ public class FileTreeView extends TreeView<File> {
     fileChangesWatcher = new FileChangesWatcher(this, path);
     fileChangesWatcherThread = new Thread(fileChangesWatcher);
     fileChangesWatcherThread.setDaemon(true);
-    fileChangesWatcherThread.setName("file watcher - "+path.getFileName().toString()+" "+(int)(Math.random()*100));
+    fileChangesWatcherThread
+        .setName("file watcher - " + path.getFileName().toString() + " " + (int) (Math.random() * 100));
     fileChangesWatcherThread.start();
   }
 
@@ -132,5 +148,18 @@ public class FileTreeView extends TreeView<File> {
       parentTreeItem.refresh();
       getSelectionModel().select(parentTreeItem);
     });
+  }
+
+  public void editSelectedItem() {
+    FileTreeItem selectedItem = (FileTreeItem) getSelectionModel().getSelectedItem();
+    for (FileFormatCell fileFormatCell : fileFormatCells) {
+      if (selectedItem.getValue().equals(fileFormatCell.getFile())) {
+        fileFormatCell.startEdit();
+      }
+    }
+  }
+
+  public void registerFileFormatCell(FileFormatCell fileFormatCell) {
+    this.fileFormatCells.add(fileFormatCell);
   }
 }
