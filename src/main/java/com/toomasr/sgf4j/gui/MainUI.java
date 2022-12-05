@@ -1166,7 +1166,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     pane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
-        System.out.println("MainUI - "+event.getCode()+ " "+event.getSource());
+        //System.out.println("MainUI - "+event.getCode()+ " "+event.getSource());
         if (event.isMetaDown()) {
           return;
         }
