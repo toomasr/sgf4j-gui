@@ -6,7 +6,6 @@ import com.toomasr.sgf4j.parser.board.StoneState;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -23,12 +22,10 @@ public class TreeStone extends StackPane implements MoveTreeElement {
   private int stonePointWidth = 28;
 
   private GameNode node;
-  private Rect angle rect;
+  private Rectangle rect;
 
   private boolean drawLeftArrow = true;
   private boolean drawRightArrow = true;
-  
-  private ContextMenu contextMenu = new ContextMenu();
 
   public TreeStone(GameNode node) {
     this(node, true, true);
@@ -54,18 +51,8 @@ public class TreeStone extends StackPane implements MoveTreeElement {
     if (node.getProperty("C") != null) {
       drawCommentMarker();
     }
-    
-    getStyleClass().add("tree-stone");
-    
-    MenuItem renameItem = new MenuItem("Rename");
-    renameItem.setOnAction(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent arg0) {
-        System.out.println("rename");
-      }
-    });
 
-    contextMenu.getItems().add(renameItem);
+    getStyleClass().add("tree-stone");
   }
 
   private void drawRightArrow() {
