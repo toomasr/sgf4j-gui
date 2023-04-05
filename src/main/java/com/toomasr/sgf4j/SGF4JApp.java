@@ -19,11 +19,13 @@ import com.toomasr.sgf4j.properties.AppState;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
@@ -74,7 +76,7 @@ public class SGF4JApp extends Application {
     Pane mainUI = mainUIBuilder.buildUI();
     mainUIBuilder.initGame();
 
-    this.scene = new Scene(mainUI);
+    this.scene = new Scene(mainUI);   
     scene.getStylesheets().add("/styles.css");
 
     enableFileDragging(scene);
