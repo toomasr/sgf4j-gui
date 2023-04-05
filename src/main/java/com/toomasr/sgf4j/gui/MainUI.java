@@ -187,6 +187,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     VBox gameMetaInfo = generateGameMetaInfoPane();
     TextArea commentArea = generateCommentPane();
     TitledPane tPane = new TitledPane("Comment Area", commentArea);
+    
     rightVBox.getChildren().addAll(gameMetaInfo, tPane);
     rightVBox.setMaxWidth(450);
     VBox.setVgrow(commentArea, Priority.ALWAYS);
@@ -194,7 +195,6 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     // lets put everything into a rootbox!
     HBox rootHBox = new HBox();
     rootHBox.getChildren().addAll(leftVBox, centerVBox, rightVBox);
-    enableKeyboardShortcuts(centerVBox);
     HBox.setHgrow(leftVBox, Priority.ALWAYS);
     HBox.setHgrow(rightVBox, Priority.SOMETIMES);
 
@@ -210,6 +210,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     VBox.setVgrow(rootHBox, Priority.ALWAYS);
     VBox.setVgrow(statusBar, Priority.NEVER);
 
+    enableKeyboardShortcuts(rootVbox);
+    
     return rootVbox;
   }
 
@@ -753,7 +755,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
    */
   private ScrollPane generateMoveTreeScrollPane() {
     ScrollPane scrollPane = new ScrollPane();
-    scrollPane.setMinHeight(150);
+    scrollPane.setMinHeight(100);
     scrollPane.setPrefHeight(175);
     scrollPane.setPrefWidth(640);
     scrollPane.setHbarPolicy(ScrollBarPolicy.ALWAYS);
@@ -1163,17 +1165,19 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
   }
 
   private void enableKeyboardShortcuts(Pane pane) {
-    pane.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-      @Override
-      public void handle(KeyEvent event) {
-        //System.out.println("MainUI - "+event.getCode()+ " "+event.getSource());
+  	pane.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<Event>() {
+  		@Override
+      public void handle(Event genericEvent) {
+      	KeyEvent event = (KeyEvent)genericEvent;
+
         if (event.isMetaDown()) {
           return;
         }
 
         // wow, this is bad style but works right now
-        if (commentArea.isFocused())
+        if (commentArea.isFocused()) {
           return;
+        }
 
         if (event.getEventType().equals(KeyEvent.KEY_PRESSED)) {
           if (event.getCode().equals(KeyCode.LEFT)) {
@@ -1188,8 +1192,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
             fileTreeView.editSelectedItem();
           }
         }
-      }
-    });
+	    }
+	});
   }
 
   public BoardSquare[][] getBoard() {
