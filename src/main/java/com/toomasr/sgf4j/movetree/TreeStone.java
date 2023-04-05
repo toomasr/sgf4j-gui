@@ -3,10 +3,7 @@ package com.toomasr.sgf4j.movetree;
 import com.toomasr.sgf4j.parser.GameNode;
 import com.toomasr.sgf4j.parser.board.StoneState;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
