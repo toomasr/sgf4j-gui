@@ -158,6 +158,7 @@ public class FileFormatCell extends TreeCell<File> {
         } else if (t.getCode() == KeyCode.ESCAPE) {
           cancelEdit();
         } else {
+        	System.out.println("Debug - what is wrong " + t.getText());
         }
       }
     });
