@@ -187,7 +187,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     VBox gameMetaInfo = generateGameMetaInfoPane();
     TextArea commentArea = generateCommentPane();
     TitledPane tPane = new TitledPane("Comment Area", commentArea);
-    
+
     rightVBox.getChildren().addAll(gameMetaInfo, tPane);
     rightVBox.setMaxWidth(450);
     VBox.setVgrow(commentArea, Priority.ALWAYS);
@@ -211,7 +211,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     VBox.setVgrow(statusBar, Priority.NEVER);
 
     enableKeyboardShortcuts(rootVbox);
-    
+
     return rootVbox;
   }
 
@@ -1166,11 +1166,11 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
   }
 
   private void enableKeyboardShortcuts(Pane pane) {
-  	pane.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<Event>() {
-  		@Override
+    pane.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<Event>() {
+      @Override
       public void handle(Event genericEvent) {
-      	KeyEvent event = (KeyEvent)genericEvent;
-      	
+        KeyEvent event = (KeyEvent) genericEvent;
+
         if (event.isMetaDown()) {
           return;
         }
@@ -1193,8 +1193,8 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
             fileTreeView.editSelectedItem();
           }
         }
-  	  }
-	});
+      }
+    });
   }
 
   public BoardSquare[][] getBoard() {

@@ -74,7 +74,7 @@ public class SGF4JApp extends Application {
     Pane mainUI = mainUIBuilder.buildUI();
     mainUIBuilder.initGame();
 
-    this.scene = new Scene(mainUI);   
+    this.scene = new Scene(mainUI);
     scene.getStylesheets().add("/styles.css");
 
     enableFileDragging(scene);
