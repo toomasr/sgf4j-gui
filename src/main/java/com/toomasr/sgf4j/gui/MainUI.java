@@ -903,6 +903,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     // only ff if such a move exists
     if (node != null) {
       fastForwardTo(node);
+      ensureVisibleForActiveTreeNode(currentMove);
     }
   }
 
@@ -1169,7 +1170,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
   		@Override
       public void handle(Event genericEvent) {
       	KeyEvent event = (KeyEvent)genericEvent;
-
+      	
         if (event.isMetaDown()) {
           return;
         }
@@ -1192,7 +1193,7 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
             fileTreeView.editSelectedItem();
           }
         }
-	    }
+  	  }
 	});
   }
 
