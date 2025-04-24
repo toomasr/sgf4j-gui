@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,18 +51,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeItem.TreeModificationEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -135,6 +127,25 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
   private boolean matchMoves = false;
   private boolean entryTypeMoves = true;
   private boolean showSortButtons = false;
+
+
+
+  /**
+   * Represents the state of a single board position, including both stone and text overlay
+   */
+  private class BoardPositionState {
+    StoneState stoneState;
+    String overlayText;
+
+    public BoardPositionState(StoneState stoneState, String overlayText) {
+      this.stoneState = stoneState;
+      this.overlayText = overlayText;
+    }
+  }
+
+  // Update the board state backup to store position states
+  private BoardPositionState[][] boardStateBackup;
+  private boolean boardStateBackedUp = false;
 
   public MainUI(SGF4JApp app) {
     this.app = app;
@@ -351,6 +362,9 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       hbox.getChildren().add(btn);
       int finalI = i;
       btn.setOnAction(e -> {
+//        MainUI.this.game.updateFileStatus(btn.getText());
+//        resetProblemStatusButtonStyles();
+//        btn.getStyleClass().add("btn-selected");
         updateInterfaceState(finalI);
 
         // trigger the event to update the icon
@@ -378,6 +392,9 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
       hbox.getChildren().add(btn);
       int finalI = i;
       btn.setOnAction(e -> {
+//        MainUI.this.game.updateFileStatus(btn.getText());
+//        resetProblemStatusButtonStyles();
+//        btn.getStyleClass().add("btn-selected");
         updateEntryType(finalI);
 
         // trigger the event to update the icon
@@ -856,14 +873,309 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
 
   private void configureMoveTreeElement(GameNode node, MoveTreeElement treeStone) {
     nodeToTreeStone.put(node.getId(), treeStone);
-    ((StackPane) treeStone).addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
-        MoveTreeElement stone = (MoveTreeElement) event.getSource();
-        fastForwardTo(stone.getMove());
+
+    StackPane stonePane = (StackPane) treeStone;
+
+    // Create a context menu for right-click deletion
+    ContextMenu contextMenu = new ContextMenu();
+    MenuItem deleteItem = new MenuItem("Delete Move");
+    deleteItem.setOnAction(e -> {
+      deleteGameNode(node);
+    });
+    contextMenu.getItems().add(deleteItem);
+
+    // Add hover events
+    stonePane.setOnMouseEntered(e -> previewBoardStateAtNode(node));
+    stonePane.setOnMouseExited(e -> restoreBoardState());
+
+    // Add mouse click handler - handle both left and right clicks
+    stonePane.setOnMouseClicked(event -> {
+      if (event.getButton() == MouseButton.PRIMARY) {
+        // Left click - make this the current position
+        restoreBoardState();
+        fastForwardTo(node);
+        event.consume();
+      } else if (event.getButton() == MouseButton.SECONDARY) {
+        // Right click - show context menu for deletion
+        contextMenu.show(stonePane, event.getScreenX(), event.getScreenY());
+        event.consume();
       }
     });
   }
+
+  /**
+   * Previews the board state at a specific game node when hovering over it in the tree
+   * Shows all moves that lead up to the selected position
+   * @param targetNode The game node to preview
+   */
+  private void previewBoardStateAtNode(GameNode targetNode) {
+    // Save current board state to restore later
+    saveCurrentBoardState();
+
+    // Clear the board
+    clearBoard();
+
+    // Build a path from root to the target node
+    List<GameNode> pathToNode = buildPathToNode(targetNode);
+
+    // Replay all moves along the path
+    for (GameNode node : pathToNode) {
+      if (node.isMove() && !node.isPass()) {
+        int[] coords = node.getCoords();
+        if (coords != null && coords.length == 2) {
+          StoneState color = node.getColorAsEnum();
+          BoardSquare square = board[coords[0]][coords[1]];
+          square.placeStone(color);
+
+          // Highlight the last move (the target node)
+          if (node == targetNode) {
+            square.highLightStone();
+          }
+        }
+      }
+    }
+
+    // Handle any setup stones (AB/AW properties) that might be in the path
+    processSetupStones(pathToNode);
+  }
+
+  /**
+   * Builds a path from the root node to the target node
+   * @param targetNode The target game node
+   * @return A list of nodes from root to target in order
+   */
+  private List<GameNode> buildPathToNode(GameNode targetNode) {
+    List<GameNode> path = new ArrayList<>();
+    GameNode current = targetNode;
+
+    // Work backwards from target to root
+    while (current != null) {
+      path.add(0, current); // Add to front of list
+      current = current.getParentNode();
+    }
+
+    return path;
+  }
+
+  /**
+   * Process any setup stones (AB/AW) in the path to the target node
+   * @param path List of nodes in the path
+   */
+  private void processSetupStones(List<GameNode> path) {
+    for (GameNode node : path) {
+      // Handle black setup stones (AB property)
+      String abValue = node.getProperty("AB");
+      if (abValue != null) {
+        String[] blackStones = abValue.split(",");
+        for (String pos : blackStones) {
+          int[] coords = Util.alphaToCoords(pos);
+          if (coords != null && coords.length == 2) {
+            board[coords[0]][coords[1]].placeStone(StoneState.BLACK);
+          }
+        }
+      }
+
+      // Handle white setup stones (AW property)
+      String awValue = node.getProperty("AW");
+      if (awValue != null) {
+        String[] whiteStones = awValue.split(",");
+        for (String pos : whiteStones) {
+          int[] coords = Util.alphaToCoords(pos);
+          if (coords != null && coords.length == 2) {
+            board[coords[0]][coords[1]].placeStone(StoneState.WHITE);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Clears all stones and overlay text from the board
+   */
+  private void clearBoard() {
+    for (int i = 0; i < 19; i++) {
+      for (int j = 0; j < 19; j++) {
+        board[i][j].removeStone();
+        board[i][j].removeOverlayText();
+      }
+    }
+  }
+
+  /**
+   * Restores the board to its previous state before preview
+   */
+  private void restoreBoardState() {
+    if (boardStateBackedUp) {
+      // First, clear everything from the board
+      clearBoard();
+
+      // Then restore the backed-up state
+      for (int i = 0; i < 19; i++) {
+        for (int j = 0; j < 19; j++) {
+          BoardSquare square = board[i][j];
+          BoardPositionState originalState = boardStateBackup[i][j];
+
+          // Restore stone state if not empty
+          if (originalState.stoneState != StoneState.EMPTY) {
+            square.placeStone(originalState.stoneState);
+          }
+
+          // Restore overlay text if present
+          if (originalState.overlayText != null) {
+            square.addOverlayText(originalState.overlayText);
+          }
+        }
+      }
+
+      boardStateBackedUp = false;
+      boardStateBackup = null; // Help garbage collection
+    }
+  }
+
+  /**
+   * Saves the current state of the board for later restoration
+   */
+  private void saveCurrentBoardState() {
+    if (!boardStateBackedUp) {
+      boardStateBackup = new BoardPositionState[20][20]; // Go board is 19x19 but we're using 1-indexed
+
+      for (int i = 0; i < 19; i++) {
+        for (int j = 0; j < 19; j++) {
+          BoardSquare square = board[i][j];
+          String overlayText = getOverlayTextFromSquare(square);
+          boardStateBackup[i][j] = new BoardPositionState(square.getState(), overlayText);
+        }
+      }
+
+      boardStateBackedUp = true;
+    }
+  }
+  /**
+   * Gets the overlay text from a board square by checking its children
+   * @param square The board square to check
+   * @return The text content or null if no text overlay exists
+   */
+  private String getOverlayTextFromSquare(BoardSquare square) {
+    for (javafx.scene.Node child : square.getChildren()) {
+      if (child instanceof Text) {
+        return ((Text) child).getText();
+      }
+    }
+    return null;
+  }
+
+
+
+  /**
+   * Highlights a position on the board to show preview when hovering over a move in the tree
+   * @param x X coordinate (1-19)
+   * @param y Y coordinate (1-19)
+   * @param stoneColor Color of the stone to place
+   */
+  private void highlightBoardPosition(int x, int y, StoneState stoneColor) {
+    // Store current board state to restore later
+    saveCurrentBoardState();
+
+    // Place a temporary preview stone
+    BoardSquare square = board[x][y];
+
+    if (square.getState() == StoneState.EMPTY) {
+      // Only show preview if position is empty
+      square.placeStone(stoneColor);
+      square.highLightStone(); // Use the highlight effect for the preview
+    }
+  }
+
+  /**
+   * Removes the highlight from the board when mouse exits the tree node
+   */
+  private void unhighlightBoardPosition() {
+    // Restore the board to its previous state
+    restoreBoardState();
+  }
+  
+  /**
+   * Deletes a move/node from the game tree
+   * @param nodeToDelete The node to delete
+   */
+  private void deleteGameNode(GameNode nodeToDelete) {
+    // We can't delete the root node (has no parent)
+    if (nodeToDelete.getParentNode() == null) {
+      updateStatus("Cannot delete the root node");
+      return;
+    }
+
+    // Get the parent node
+    GameNode parentNode = nodeToDelete.getParentNode();
+
+    // If we're currently on this node or one of its children, go back to parent
+    if (currentMove == nodeToDelete || isDescendantOf(currentMove, nodeToDelete)) {
+      fastForwardTo(parentNode);
+    }
+
+    // If this was the parent's next node, update parent's next node reference
+    if (parentNode.getNextNode() == nodeToDelete) {
+      // Find another child to be the next node, or set to null
+      if (parentNode.hasChildren() && parentNode.getChildren().size() > 1) {
+        // Try to find a child that isn't the one we're deleting
+        for (GameNode child : parentNode.getChildren()) {
+          if (child != nodeToDelete) {
+            parentNode.setNextNode(child);
+            break;
+          }
+        }
+      } else {
+        // No other children, set nextNode to null
+        parentNode.setNextNode(null);
+      }
+    }
+
+    // Remove from children collection if it's there
+    parentNode.getChildren().remove(nodeToDelete);
+
+    // Remove from the visual mapping
+    MoveTreeElement treeStone = nodeToTreeStone.remove(nodeToDelete.getId());
+    if (treeStone != null) {
+      movePane.getChildren().remove((StackPane) treeStone);
+    }
+
+    // Rebuild the move tree visualization
+    reinitMoveTreePane();
+
+    // Mark that the game has been modified - use a custom property instead
+    game.setProperty("MODIFIED", "true");
+
+    updateStatus("Deleted move " + nodeToDelete.getMoveNo());
+  }
+
+  /**
+   * Checks if a node is a descendant of another node
+   * @param possibleDescendant Node to check
+   * @param ancestor Potential ancestor node
+   * @return true if possibleDescendant is a descendant of ancestor
+   */
+  private boolean isDescendantOf(GameNode possibleDescendant, GameNode ancestor) {
+    if (possibleDescendant == null) {
+      return false;
+    }
+
+    GameNode parent = possibleDescendant.getParentNode();
+    while (parent != null) {
+      if (parent == ancestor) {
+        return true;
+      }
+      parent = parent.getParentNode();
+    }
+
+    return false;
+  }
+
+
+
+
+
+
+
 
   /*
    * Generates the boilerplate for the move tree pane. The pane is actually
@@ -1286,6 +1598,26 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
     return newSize;
   }
 
+  /**
+   * Undo the last move by deleting the current node and moving to the previous one
+   */
+  private void undoLastMove() {
+    if (currentMove != null && currentMove.isMove() && currentMove.getParentNode() != null) {
+      // Store the parent node before deleting the current node
+      GameNode parentNode = currentMove.getParentNode();
+
+      // Delete the current move node
+      deleteGameNode(currentMove);
+
+      // The deleteGameNode method should already move to the parent node,
+      // but let's make sure we're at the right position
+      fastForwardTo(parentNode);
+    } else {
+      updateStatus("Cannot undo - no move to delete");
+    }
+  }
+
+
   private void enableKeyboardShortcuts(Pane pane) {
     pane.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<Event>() {
       @Override
@@ -1302,7 +1634,11 @@ public class MainUI implements EventHandler<javafx.scene.input.MouseEvent> {
         }
 
         if (event.getEventType().equals(KeyEvent.KEY_PRESSED)) {
-          if (event.getCode().equals(KeyCode.LEFT)) {
+          if (event.isControlDown() && event.getCode() == KeyCode.Z) {
+            // Ctrl+Z pressed - undo the last move
+            undoLastMove();
+            event.consume();
+          } else if (event.getCode().equals(KeyCode.LEFT)) {
             handlePreviousPressed();
           } else if (event.getCode().equals(KeyCode.RIGHT)) {
             handleNextPressed();
